@@ -1,0 +1,72 @@
+/**
+ * 
+ */
+package com.emptoris.ecm.exit.mccs.util;
+
+import com.dicarta.infra.common.PluginException;
+import com.emptoris.common.config.ConfigurationException;
+import com.emptoris.ecm.exit.CustomExitContext;
+import com.emptoris.ecm.exit.mccs.constants.ContractMessages;
+
+/**
+ * @author Aalok.Singhvi
+ *
+ */
+public class UserExitErrorUtil {
+	
+	
+	/**
+	 * Helper method to throw plugin exception
+	 * 
+	 * @param messageKey
+	 * @param args
+	 * @param ex
+	 * @throws PluginException
+	 */
+	public static void throwPluginException(String messageKey, Object[] args,
+			Throwable ex) throws PluginException {
+		try {
+			CustomExitContext cec = CustomExitContext.getInstance();
+			cec.throwPluginException(messageKey, args, ex);
+		} catch (ConfigurationException e) {
+			// throw the Configuration exception as PluginException
+			throw new PluginException(e);
+		}
+	}
+	
+	
+	public static void throwPluginException() throws PluginException {
+		try {
+			CustomExitContext cec = CustomExitContext.getInstance();
+			cec.throwPluginException(ContractMessages.GENERAL_ECMAPI_ERROR,
+					(new Object[] {}),	null);
+		} catch (ConfigurationException e) {
+			// throw the Configuration exception as PluginException
+			throw new PluginException(e);
+		}
+	}
+	
+	
+	
+	/**
+	 * Helper method to throw plugin exception, uses the general.ecmapi.error
+	 * error message key
+	 * 
+	 * @param ex
+	 * @throws PluginException
+	 */
+	public static void throwPluginException(Throwable ex)
+			throws PluginException {
+
+		try {
+			CustomExitContext cec = CustomExitContext.getInstance();
+			// LOG.error(e);
+			cec.throwPluginException("general.ecmapi.error",
+					(new Object[] {ex.getMessage()}), ex);
+		} catch (ConfigurationException e) {
+			// throw the Configuration exception as PluginException
+			throw new PluginException(e);
+		}
+	}
+
+}

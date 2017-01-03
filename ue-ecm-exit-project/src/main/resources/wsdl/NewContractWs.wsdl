@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://emptoris.dsa.cn.com/" name="NewContractWs" targetNamespace="http://emptoris.dsa.cn.com/">
+<wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://emptoris.dsa.cn.com/" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://emptoris.dsa.cn.com/">
+<xs:element name="contractNotification" type="tns:contractNotification"/>
+<xs:element name="newContractNotification" type="tns:newContractNotification"/>
+<xs:element name="newContractNotificationResponse" type="tns:newContractNotificationResponse"/>
+<xs:element name="notificationResponse" type="tns:notificationResponse"/>
+<xs:complexType name="newContractNotification">
+<xs:sequence>
+<xs:element name="notification" type="tns:contractNotification"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="contractNotification">
+<xs:sequence>
+<xs:element name="contractNumber" type="xs:string"/>
+<xs:element name="status" type="xs:string"/>
+<xs:element name="rightsCode" type="xs:string"/>
+<xs:element minOccurs="0" name="contractId" type="xs:string"/>
+<xs:element minOccurs="0" name="wizardId" type="xs:string"/>
+<xs:element minOccurs="0" name="ctsCallType" type="xs:string"/>
+<xs:element minOccurs="0" name="startDate" type="xs:date"/>
+<xs:element minOccurs="0" name="endDate" type="xs:date"/>
+<xs:element minOccurs="0" name="paymentStyle" type="xs:string"/>
+<xs:element minOccurs="0" name="psUsername" type="xs:string"/>
+<xs:element minOccurs="0" name="contractName" type="xs:string"/>
+<xs:element minOccurs="0" name="dualRights" type="xs:string"/>
+<xs:element minOccurs="0" name="single" type="xs:string"/>
+<xs:element minOccurs="0" name="createdOn" type="xs:string"/>
+<xs:element minOccurs="0" name="contractClass" type="xs:string"/>
+<xs:element minOccurs="0" name="unavailSelect" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="newContractNotificationResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="notificationResponse" type="tns:notificationResponse"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="notificationResponse">
+<xs:complexContent>
+<xs:extension base="tns:contractNotification">
+<xs:sequence>
+<xs:element minOccurs="0" name="responseMsg" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:element name="NotificationFailureFault" type="tns:NotificationFailureFault"/>
+<xs:complexType name="NotificationFailureFault">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="classContext" type="xs:string"/>
+<xs:element minOccurs="0" name="message" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="MissingDataFault" type="tns:MissingDataFault"/>
+<xs:complexType name="MissingDataFault">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="classContext" type="xs:string"/>
+<xs:element minOccurs="0" name="message" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+</wsdl:types>
+<wsdl:message name="newContractNotification">
+<wsdl:part element="ns1:newContractNotification" name="parameters"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="newContractNotificationResponse">
+<wsdl:part element="ns1:newContractNotificationResponse" name="parameters"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="NotificationFailureFault">
+<wsdl:part element="ns1:NotificationFailureFault" name="NotificationFailureFault"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="MissingDataFault">
+<wsdl:part element="ns1:MissingDataFault" name="MissingDataFault"></wsdl:part>
+</wsdl:message>
+<wsdl:portType name="NewContractWs">
+<wsdl:operation name="newContractNotification">
+<wsdl:input message="ns1:newContractNotification" name="newContractNotification"></wsdl:input>
+<wsdl:output message="ns1:newContractNotificationResponse" name="newContractNotificationResponse"></wsdl:output>
+<wsdl:fault message="ns1:NotificationFailureFault" name="NotificationFailureFault"></wsdl:fault>
+<wsdl:fault message="ns1:MissingDataFault" name="MissingDataFault"></wsdl:fault>
+</wsdl:operation>
+</wsdl:portType>
+</wsdl:definitions>

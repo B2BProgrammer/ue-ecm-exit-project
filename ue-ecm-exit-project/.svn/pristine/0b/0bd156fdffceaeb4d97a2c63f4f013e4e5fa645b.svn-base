@@ -1,0 +1,45 @@
+package com.emptoris.ecm.exit.mccs.handler;
+
+import com.dicarta.infra.common.PluginException;
+import com.dicarta.infra.logging.ILogger;
+import com.dicarta.infra.logging.Logger;
+import com.emptoris.ecm.api.intf.ExitContext;
+import com.emptoris.ecm.exit.mccs.implementation.AmendmentContractNumberUpdate;
+
+/**
+ * Handler code called before & After CORE EXECUTE Process
+ * 
+ * @author Aalok.Singhvi
+ *
+ */
+public class ContractExecuteHandler {
+	
+	private static final ILogger LOG = Logger.getLogger(ContractExecuteHandler.class);
+
+	/**
+	 * Called before the CORE execute process
+	 * 
+	 * @param exitContext
+	 */
+	public void executePreContractExecute(ExitContext exitContext) {
+		LOG.info("No Operations defined for preContract Execute");
+		
+	}
+
+	/**
+	 * Called after the CORE execute process
+	 * 
+	 * @param exitContext
+	 * @throws PluginException
+	 */
+	public void executePostContractExecute(ExitContext exitContext) throws PluginException {
+		LOG.info("Starting the Amendment Contract Name Update");
+		
+		AmendmentContractNumberUpdate amdContNameUpd = new AmendmentContractNumberUpdate(exitContext);
+		amdContNameUpd.updateAmendmentContractNumber(exitContext);
+		
+		
+		LOG.info("Ending the Amendment Contract Name Update");
+	}
+
+}

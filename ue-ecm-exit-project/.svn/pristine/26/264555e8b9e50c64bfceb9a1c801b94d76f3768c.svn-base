@@ -1,0 +1,31 @@
+/**
+ * 
+ */
+package com.emptoris.ecm.exit.mccs.constants;
+
+
+/**
+ * Class to hold all the variable for the Error set
+ * 
+ * @author Aalok.Singhvi
+ *
+ */
+public interface ContractMessages {
+	
+	
+	String GENERAL_ECMAPI_ERROR = "general.ecmapi.error";
+	
+	
+	String ERROR_AUTONAME_COMPANID_MISSING = "errormessage.mccs.autonaming.company.id.missing";
+	String ERROR_AUTONAME_CONT_TYPE_MISSING = "errormessage.mccs.autonaming.contract.type.missing";
+	String ERROR_AUTONAME_CONT_GENERIC = "errormessage.mccs.autonaming.generic";
+	
+	
+	// NAC Error set
+	String ERROR_COMP_IDNOT_CONFIG = "errormessage.mccs.autonaming.company.id.notconfig";
+	String ERROR_COMP_IDNOT_SELECT = "errormessage.mccs.autonaming.company.id.notselect";	
+	String ERROR_CONTID_IDNOT_CONFIG = "errormessage.mccs.autonaming.cont.type.notconfig";
+	String ERROR_CONTID_IDNOT_SELECT = "errormessage.mccs.autonaming.cont.type.notselect";
+	
+
+}

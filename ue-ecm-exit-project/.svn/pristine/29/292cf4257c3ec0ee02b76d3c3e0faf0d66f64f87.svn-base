@@ -1,0 +1,118 @@
+package com.emptoris.ecm.exit;
+
+import com.dicarta.infra.common.PluginException;
+import com.dicarta.infra.common.WarningMessageException;
+import com.dicarta.infra.logging.ILogger;
+import com.dicarta.infra.logging.Logger;
+import com.emptoris.common.config.ConfigurationException;
+import com.emptoris.ecm.api.intf.ExitContext;
+
+import com.emptoris.ecm.api.exception.EcmApiException;
+import com.emptoris.ecm.exit.ExitBase;
+import com.emptoris.ecm.exit.mccs.handler.ContractCreateHandler;
+import com.emptoris.ecm.exit.mccs.handler.ContractExecuteHandler;
+
+
+public class Exit extends ExitBase {
+    private final ILogger LOG  = Logger.getLogger(Exit.class);
+    private CustomExitContext _cec =  null;
+
+    public Exit() throws PluginException {
+        super();
+        loadConfigurationProperties();
+    }
+
+    private void loadConfigurationProperties() throws PluginException
+    {
+        try {
+            _cec = CustomExitContext.getInstance();
+        } catch (ConfigurationException e) {
+            throw new PluginException("Failed to load ECM Exit Configuration. " + e.getMessage());
+        }
+    }
+
+    private void throwException(Throwable ex) throws PluginException, WarningMessageException {
+        if (ex instanceof PluginException)         throw (PluginException) ex;
+        if (ex instanceof WarningMessageException) throw (WarningMessageException) ex;
+        if (ex instanceof EcmApiException) {
+            EcmApiException e = (EcmApiException) ex;
+            LOG.error(e.getMessage(), e);
+            _cec.throwPluginException("general.ecmapi.error", (new Object[] {e.getMessage()}), e);
+        }
+        _cec.handleThrowable(ex);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////// 
+    //	                                                                         //
+    //========== Below here are all of the customer-specific exit events ========//
+    //	                                                                         //	
+    //////////////////////////////////////////////////////////////////////////////
+   
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.emptoris.ecm.exit.ExitBase#postContractCreate(com.emptoris.ecm.api
+	 * .intf.ExitContext)
+	 */
+	public final void postContractCreate(ExitContext exitContext)
+			throws PluginException, WarningMessageException {
+		LOG.info("===== postContractCreate - Begin - Contract #"
+				+ exitContext.getContract().getNumber());
+		long timeBegin = System.currentTimeMillis();		
+		
+		// normal interview process
+		ContractCreateHandler createHandler = new ContractCreateHandler();	
+		createHandler.executePostContracrtCreate(exitContext);
+
+	
+		long timeEnd = System.currentTimeMillis();
+		LOG.info("===== postContractCreate - End - Contract #"
+				+ exitContext.getContract().getNumber() + ", time= "
+				+ (timeEnd - timeBegin) + " ms");
+	}
+	
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see com.emptoris.ecm.exit.ExitBase#postContractSave(com.emptoris.ecm.api.intf.ExitContext)
+	 */
+	public final void preContractExecute(ExitContext exitContext)
+			throws PluginException, WarningMessageException {
+		LOG.info("===== preContractExecute - Begin - Contract #"
+				+ exitContext.getContract().getNumber());	
+		
+		long timeBegin = System.currentTimeMillis();
+		ContractExecuteHandler executeHandler = new ContractExecuteHandler();		
+		executeHandler.executePreContractExecute(exitContext);		
+		long timeEnd = System.currentTimeMillis();
+		
+		LOG.info("===== preContractExecute - End - Contract #"
+				+ exitContext.getContract().getNumber() + ", time= "
+				+ (timeEnd - timeBegin) + " ms");		
+	}	
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.emptoris.ecm.exit.ExitBase#postContractSave(com.emptoris.ecm.api.
+	 * intf.ExitContext)
+	 */
+	public final void postContractExecute(ExitContext exitContext)
+			throws PluginException, WarningMessageException {
+		LOG.info("===== postContractExecute - Begin - Contract #"
+				+ exitContext.getContract().getNumber());
+
+		long timeBegin = System.currentTimeMillis();
+		ContractExecuteHandler executeHandler = new ContractExecuteHandler();
+		executeHandler.executePostContractExecute(exitContext);
+		long timeEnd = System.currentTimeMillis();
+
+		LOG.info("===== postContractExecute - End - Contract #"
+				+ exitContext.getContract().getNumber() + ", time= "
+				+ (timeEnd - timeBegin) + " ms");
+	}
+}

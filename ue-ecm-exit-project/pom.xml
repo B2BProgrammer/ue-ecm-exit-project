@@ -1,0 +1,155 @@
+	<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.emptoris.ecm</groupId>
+		<artifactId>exit-parent</artifactId>
+		<relativePath>exit-parent-pom.xml</relativePath>
+		<version>1.0</version>
+	</parent>
+	<groupId>com.emptoris.ecm.exit</groupId>
+	<artifactId>ue-ecm-exit-project</artifactId> <!-- This is used in the ZIP filename along with the version -->
+	<version>9.0</version> <!-- update version here -->
+	<name>UE-ECM-Exit-Project</name>
+	<packaging>jar</packaging>
+	<properties>
+		<build.number>1</build.number> <!-- this should come from a counter -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!--
+			specify which version of ECM you will build against. Note that this
+			number corresponds to the number in the repository used for the jars.
+		-->
+		<ecm.version>10.0.1</ecm.version>
+
+		<build_java_version>1.6</build_java_version>
+
+	</properties>
+	<developers>
+		<developer>
+		</developer>
+	</developers>
+	<dependencies>
+		<!--
+			Each dependency listed here needs to be available in one of the
+			repositories configured below. First upload the jar to the
+			repository. Then you can reference it here. Maven will automatically
+			pull it down for building. ****If the jar you are adding will not be
+			available within ECM at **** runtime, you should then also include
+			the jar in the section maven-dependency-plugin which is in the
+			build/plugins section below. This copies the jar into the /lib folder
+			that is created as part of the assembly.
+		-->
+
+	
+		<!-- Sample format:
+			<dependency> <groupId>com.emptoris</groupId>
+			<artifactId>utilities</artifactId> <version>${ecm.version}</version>
+			</dependency>
+		-->
+	</dependencies>
+	
+	<build>
+
+		<plugins>
+
+
+			<!-- each third party (not available in ECM)			-->
+			<!-- should be listed here (1 artifactItem per jar)		-->
+			<!-- any third party jars should be put into the repository -->
+			<!-- this is how we copy them from the repo to lib for deployment -->
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<useDefaultManifestFile>true</useDefaultManifestFile>
+					<archive>
+						<addMavenDescriptor>true</addMavenDescriptor>
+						<compress>true</compress>
+						<manifestEntries>
+							<exit_version>${version}</exit_version>
+							<exit_build_number>${build.number}</exit_build_number>
+							<ecm_core_version>${ecm.version}</ecm_core_version>
+							<ecm_core_build_number></ecm_core_build_number>
+						</manifestEntries>
+					</archive>
+					<finalName>ue-ecm-exit-project</finalName>   <!-- this is the JAR name -->
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${build_java_version}</source>
+					<target>${build_java_version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+				<!--
+					<execution>
+						<id>copy</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<com.emptoris.ecm.exit.CondeNast.configuration>
+							<excludeTransitive>true</excludeTransitive>
+
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<artifactItems>
+
+								<artifactItem>
+									<groupId>com.emptoris.thirdparty</groupId>
+									<artifactId>com.snowbound</artifactId>
+									<version>1.0</version>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>
+										${project.build.directory}/lib </outputDirectory>
+								</artifactItem>
+
+							</artifactItems>
+						</com.emptoris.ecm.exit.CondeNast.configuration>
+					</execution>
+  				-->
+				</executions>
+			</plugin>
+			<plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>axistools-maven-plugin</artifactId>
+                <version>1.2</version>
+                 <dependencies>
+                    <dependency>
+                        <groupId>org.apache</groupId>
+                        <artifactId>axis</artifactId>
+                        <version>1.2</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <outputDirectory>target/generated-sources/main/java</outputDirectory>
+                    <sourceDirectory>src/main/resources/wsdl</sourceDirectory>
+                    <allElements>true</allElements>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+		</plugins>
+		<finalName>${artifactId}_${version}_${build.number}</finalName>    <!-- this is the distribution filename -->
+	</build>
+	<dependencyManagement>
+		<dependencies>
+		</dependencies>
+	</dependencyManagement>
+</project>

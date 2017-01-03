@@ -1,0 +1,108 @@
+<entity_list>
+
+  <entity_definition>
+
+    <entity_name>CONDENAST_ACTIONMESSAGE_TABLE</entity_name>
+
+    <entity_package_name>
+      persistence
+    </entity_package_name>
+    <data_package_name>
+      persistence
+    </data_package_name>
+    <criteria_package_name>
+      persistence
+    </criteria_package_name>
+    <iterator_package_name>
+      persistence
+    </iterator_package_name>
+
+    <entity_data>
+
+      <class_name>CONDENAST_ACTIONMESSAGE_TABLE</class_name>
+      <class_create>true</class_create>
+
+      <attribute_list>
+      	<attribute>
+          <attrib_name>m_code</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>CODE</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+      	
+        <attribute>
+          <attrib_name>m_contractnumber</attrib_name>
+          <attrib_type>int</attrib_type>
+          <db_field_name>CONTRACT_NUMBER</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+        
+		<attribute>
+          <attrib_name>m_wizardid</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>WIZARD_ID</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+        
+        
+        <attribute>
+          <attrib_name>m_contractowner</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>CONTRACT_OWNER</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+        
+		<attribute>
+          <attrib_name>m_message</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>MESSAGE</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+		
+		<attribute>
+          <attrib_name>m_timestamp</attrib_name>
+          <attrib_type>Date</attrib_type>
+          <db_field_name>TIMESTAMP</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+		
+		 </attribute_list>
+		 
+		 
+    </entity_data>
+	<function_list>
+        <function_definition>
+
+			<func_type>create</func_type>
+			<func_name>create</func_name>
+			
+
+			<sql_statement_def_list>
+				<sql_statement_def>
+
+				<sql_string>insert into CONDENAST_ACTIONMESSAGE_TABLE(CODE,CONTRACT_NUMBER,WIZARD_ID,CONTRACT_OWNER,MESSAGE,TIMESTAMP) values (?,?,?,?,?,?)</sql_string>
+
+				<sql_map_preparestmt>
+					<class_name>CONDENAST_ACTIONMESSAGE_TABLE</class_name>
+					<attrib_name>m_code</attrib_name>
+					<attrib_name>m_contractnumber</attrib_name>
+					<attrib_name>m_wizardid</attrib_name>
+					<attrib_name>m_contractowner</attrib_name>
+					<attrib_name>m_message</attrib_name>
+					<attrib_name>m_timestamp</attrib_name>
+					
+				</sql_map_preparestmt>
+
+				
+
+				</sql_statement_def>
+		</sql_statement_def_list>
+
+      </function_definition>
+	</function_list>	
+     
+
+
+  </entity_definition>
+
+</entity_list>

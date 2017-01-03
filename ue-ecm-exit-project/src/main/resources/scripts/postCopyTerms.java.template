@@ -1,0 +1,6 @@
+com.emptoris.ecm.exit.Exit exit = com.emptoris.ecm.exit.Exit.getInstance();
+exit.postCopyTerms(
+    (com.dicarta.appfound.contract.ContractData) ContractObject,
+    (com.dicarta.appfound.contract.ContractData) SourceContractObject,
+    (com.dicarta.appfound.common.IUserInfo) UserObject
+);

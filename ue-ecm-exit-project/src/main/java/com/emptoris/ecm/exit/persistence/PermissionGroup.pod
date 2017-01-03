@@ -1,0 +1,52 @@
+<entity_list>
+    <entity_definition>
+        <entity_name>PermissionGroup</entity_name>
+        <entity_package_name>persistence</entity_package_name>
+        <data_package_name>persistence</data_package_name>
+        <criteria_package_name>persistence</criteria_package_name>
+        <iterator_package_name>persistence</iterator_package_name>
+
+        <entity_data>
+            <class_name>PermissionGroupData</class_name>
+            <attribute_list>
+                <attribute>
+                    <attrib_name>m_permissionGroupId</attrib_name>
+                    <attrib_type>String</attrib_type>
+                    <iskey>true</iskey>
+                </attribute>
+                <attribute>
+                    <attrib_name>m_permissionGroupName</attrib_name>
+                    <attrib_type>String</attrib_type>
+                    <iskey>false</iskey>
+                </attribute>
+            </attribute_list>
+        </entity_data>
+
+        <function_list>
+            <function_definition>
+                <func_name>findAllValuesForName</func_name>
+                <func_type>findBySQLWhere</func_type>
+
+                <iterator_class_name>PermissionGroupDataIterator</iterator_class_name>
+
+                <data_class_def>
+                    <class_name>PermissionGroupData</class_name>
+                </data_class_def>
+
+                <sql_statement_def_list>
+                    <sql_statement_def>
+                        <sql_string>select permission_group_id, permission_group_name from permission_group</sql_string>
+
+                        <sql_map_resultset>
+                            <class_name>PermissionGroupData</class_name>
+                            <attrib_name>m_permissionGroupId</attrib_name>
+                            <attrib_name>m_permissionGroupName</attrib_name>
+                        </sql_map_resultset>
+                    </sql_statement_def>
+                </sql_statement_def_list>
+            </function_definition>
+
+        </function_list>
+    </entity_definition>
+</entity_list>
+        

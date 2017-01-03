@@ -1,0 +1,47 @@
+/**
+ * 
+ */
+package com.emptoris.ecm.exit.mccs.util;
+
+/**
+ * @author Aalok.Singhvi
+ *
+ */
+public class UserExitCommonUtil {
+	
+	
+	/**
+	 * Utility method to pad character to left to input string if totallength
+	 * value is less than supplied string then actual input string will be
+	 * returned USAGE - UserExitCommonUtil.padCharsLeft("temp", 'A', 6) will
+	 * return AAtemp *
+	 * 
+	 * @param inStr
+	 *            - input string to which character will be padded
+	 * @param filler
+	 *            - character which will be padded
+	 * @param totalLength
+	 *            - total length after padding
+	 * @return string - output string after padding
+	 */
+	public static String padCharsLeft(String inStr, final char filler,
+			final int totalLength) {
+
+		StringBuffer tmpStrBuffer = null;
+		if (null != inStr) {
+			int positionToFill = totalLength - inStr.length();
+			if (0 < positionToFill) {
+				tmpStrBuffer = new StringBuffer();
+			}
+			for (int i = 0; i < positionToFill; i++) {
+				tmpStrBuffer.append(filler);
+			}
+		}
+		if (null != tmpStrBuffer) {
+			return tmpStrBuffer.append(inStr).toString();
+		} else {
+			return inStr;
+		}
+	}
+
+}

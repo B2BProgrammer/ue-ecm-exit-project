@@ -1,0 +1,339 @@
+package com.emptoris.ecm.exit.mccs.implementation;
+
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+import com.dicarta.infra.common.PluginException;
+import com.dicarta.infra.logging.ILogger;
+import com.dicarta.infra.logging.Logger;
+import com.emptoris.common.config.ConfigurationException;
+import com.emptoris.common.config.EmpConfiguration;
+import com.emptoris.ecm.api.exception.ContractException;
+import com.emptoris.ecm.api.intf.Contract;
+import com.emptoris.ecm.api.intf.ExitContext;
+import com.emptoris.ecm.exit.common.config.ExitConfig;
+import com.emptoris.ecm.exit.mccs.constants.ConfigFeatureFlagKeys;
+import com.emptoris.ecm.exit.mccs.constants.ContractConstants;
+import com.emptoris.ecm.exit.mccs.constants.ContractMessages;
+import com.emptoris.ecm.exit.mccs.persistenceimpl.ContractNamePersister;
+import com.emptoris.ecm.exit.mccs.persistenceimpl.NonAmdPeristUtil;
+import com.emptoris.ecm.exit.mccs.util.UserExitCommonUtil;
+import com.emptoris.ecm.exit.mccs.util.UserExitErrorUtil;
+
+
+/**
+ *  Business Implementation class-
+ * 
+ * Used to Generate the Non - Amendment contract name according to mccs conditions
+ * 
+ * @author Aalok.Singhvi
+ *
+ */
+public class NonAmendmentContractNumberGeneration {
+	
+	private static final ILogger LOG = Logger.getLogger(NonAmendmentContractNumberGeneration.class);
+
+	/**
+	 * @param exitContext
+	 */
+	public NonAmendmentContractNumberGeneration(ExitContext exitContext) {
+		LOG.info("Begin of NonAmendmentContractNumberGeneration ");
+		
+		
+		LOG.info("End of NonAmendmentContractNumberGeneration ");		
+	}
+
+	
+	/**
+	 * Helper method for doing the check
+	 * a) Flag feature Enabled
+	 * @param exitContext
+	 * @return
+	 * @throws PluginException 
+	 */
+	private boolean isFeatureEnabled(ExitContext exitContext) 
+				throws PluginException {		
+		boolean isFeatureEnabled = false;
+		
+		try {
+			EmpConfiguration empConfig = ExitConfig.getExitConfig();
+			String flagKeyPart = ConfigFeatureFlagKeys.MCCS_NONAMEND_NAME_GENERATE;
+			String flagValuePart = empConfig.getRequiredStringConfiguration(flagKeyPart);
+			
+				if (flagValuePart.equalsIgnoreCase("true")) {
+					LOG.debug("This Bussiness Implementation is ENABLED");
+					isFeatureEnabled = true;
+				} else if (flagValuePart.equalsIgnoreCase("false")) {
+					LOG.debug("This Bussiness Implementation is DISABLED");
+					isFeatureEnabled = false;
+				}
+		} catch (ConfigurationException e) {
+			LOG.error("Contract Creation Stopped due to ConfigurationException" 
+					 + " While accesing Enablement Flag");
+			UserExitErrorUtil.throwPluginException(e);
+		}	
+		return isFeatureEnabled;
+	}
+	
+	/**
+	 * Helper method - for doing the check
+	 * a) Amendment or Not
+	 * @param exitContext
+	 * @return
+	 */
+	private boolean isAnyPreConditions(ExitContext exitContext) {
+		boolean isAnyPreConditions = false;
+		if (!exitContext.getContract().isAmendment()) {
+			LOG.debug("The Current Contract Context is NON Amendment");
+			isAnyPreConditions = true;
+		} 
+		return isAnyPreConditions;
+	}
+	
+	
+	/** 
+	 * Public Method called from Handler for doing the Generation of Non Amendment Name
+	 * @param exitContext
+	 * @throws PluginException 
+	 */
+	public final void generateNonAmdName(ExitContext exitContext) 
+				throws PluginException {		
+		if (isFeatureEnabled(exitContext) && isAnyPreConditions(exitContext)) {
+			populateNonAmendmentContractName(exitContext);
+			
+		} else {
+			LOG.debug("Non Amendment Contract Number update couldn't be Implemented");
+		}		
+		
+	}	
+	
+	
+
+
+	/**
+	 * Core method for generating the contract name according to MCCS conditions
+	 * 
+	 * @param exitContext
+	 * @throws PluginException 
+	 */
+	private void populateNonAmendmentContractName(ExitContext exitContext)
+				throws PluginException {		
+		LOG.debug("Beginning - the MCCS Contract Number Generation");
+		Contract currentContract = exitContext.getContract();
+		
+		if (null != currentContract) {			
+			try {
+				StringBuffer contractNameBuilder = new StringBuffer();
+				
+				// 1. Append with First Three Character Eg : ALM							
+				String firstThreeOfName = constructFirstThreeLetter(exitContext);
+				contractNameBuilder.append(firstThreeOfName);
+				
+				// 2. Appends the 2 digits of the fiscal year : ALM13
+				int fiscalYear = generateFiscalYear();
+				String finalfiscalYearString = Integer.toString(fiscalYear).substring(2,4);				  
+				contractNameBuilder.append(finalfiscalYearString);
+				//contractNameBuilder.append(Integer.toString(Calendar.getInstance().get(Calendar.YEAR)).substring(2));
+				
+				// 3. Appends the "-" character to the current Contract : Eg ALM13-
+				contractNameBuilder.append(ContractConstants.HYPHEN_CHARACTER);
+				
+				// 4. Appends the seventh character to the current Contract : Eg ALM13-R				
+				String seventhChar = constructSeventhCharacter(exitContext);
+				contractNameBuilder.append(seventhChar);
+				
+				// 5. Appends the "-" character to the current Contract : Eg ALM13-R-
+				contractNameBuilder.append(ContractConstants.HYPHEN_CHARACTER);
+				
+				// 6. Acquires the sequence number based upon 
+				// how many existing contracts of the given type exist				
+				int resultSerialNumber = NonAmdPeristUtil.generateSequenceNumber(firstThreeOfName, fiscalYear, seventhChar);
+				
+				
+				// 7. Appends the 4 digits of the sequence number : Eg 0001
+				String seqNumberStr = String.valueOf(resultSerialNumber);	
+				String zeroPaddedSeqNum = UserExitCommonUtil.padCharsLeft(seqNumberStr, ContractConstants.ZERO_FILLER, 4);
+				contractNameBuilder.append(zeroPaddedSeqNum);
+				
+			
+					// If the sequence number has reached - 9999 & the type is "P" 
+					// then replace with "M"
+					if( resultSerialNumber >= 9999						 
+						&& seventhChar.equalsIgnoreCase(ContractConstants.STR_P) ) {
+						//Purchase order has exhausted ==> replace "P" with "M"				
+						contractNameBuilder.setCharAt(6, ContractConstants.CHAR_M);	
+						int resultSerialNumberForM = NonAmdPeristUtil.generateSequenceNumber(firstThreeOfName, fiscalYear, "M");	
+						
+						
+						String seqNumberMStr = String.valueOf(resultSerialNumberForM);	
+						String zeroPaddedSeqNumM = UserExitCommonUtil.padCharsLeft(seqNumberMStr, ContractConstants.ZERO_FILLER, 4);
+						
+						contractNameBuilder.replace(8, 12, zeroPaddedSeqNumM);						
+					}
+				
+				// 8. Creates the String value for the name and updates the contract name
+				String mccsContractNumber = contractNameBuilder.toString();
+				
+				// Update the final contract name to the Contract
+				currentContract.updateName(mccsContractNumber);	
+
+				// 9. To save the new log entry
+				ContractNamePersister.persist(currentContract, mccsContractNumber);
+				
+			} catch (ContractException e) {
+				LOG.error("Contract Creation Stopped due to ContractException");
+				UserExitErrorUtil.throwPluginException(e);
+			}
+			
+			LOG.debug("The MCCS Contract Number Generation was Successfull as" 
+					+ currentContract.getName());
+		}		
+	}
+
+
+
+
+	/**
+	 * Finds the Fiscal year for the current date,
+	 * 
+	 * Eg -
+	 *   Jan 1st 2013 to September 30th 2013 ==> 2013
+	 *   October 1st 2013 to Dec 31st 2013 ==> 2014
+	
+	 * 
+	 * @return
+	 */
+	private int generateFiscalYear() {
+		int tempYear;
+		
+		int month = Calendar.getInstance().get(Calendar.MONTH);	
+		int year = Calendar.getInstance().get(Calendar.YEAR);
+		
+		if( month < 9){
+			tempYear = year;
+		} else {
+			year++;
+			tempYear = year;
+		}		
+		
+		return tempYear;
+	}
+
+
+	/**
+	 * Helper Method, which will return the First Three characters of the Contract Name
+	 * 
+	 * @param exitContext
+	 * @throws PluginException 
+	 */
+	private String constructFirstThreeLetter(ExitContext exitContext) throws PluginException {
+		String firstThreeOfName = null;		 
+		try {
+			
+			// Organization Available in the Contract Editor's Internal Primary party name
+			String owningOrganization = exitContext.getContract().getOwningOrganization().getName();
+			
+			if (null != owningOrganization) {
+				EmpConfiguration empConfig = ExitConfig.getExitConfig();		
+				// hMap will have all the configured key-value pair from the properties file
+				HashMap<String, String> hMapCompanyId = empConfig.getConfigurationsStartingWith(
+													   ContractConstants.PATTERN_COMP_ID);
+				
+				for (Entry<String, String> eachRow : hMapCompanyId.entrySet()) {
+				    String key = eachRow.getKey();
+				    String companyDescription = eachRow.getValue();			    
+				     if (null != companyDescription 
+				    	&& companyDescription.equalsIgnoreCase(owningOrganization)) {			    
+				    		 firstThreeOfName = key;
+				    		 break;
+				     }
+				}		
+				
+				// Selected Owning Organization is Not Configured in Properties file
+				if (null == firstThreeOfName) {
+					LOG.error("MCS # 1 - Available Owning Organization in ECM System doesn't match with"
+							+ "any Configured COMPANY ID Description");
+					Throwable e = null;
+					UserExitErrorUtil.throwPluginException(
+							ContractMessages.ERROR_COMP_IDNOT_CONFIG, (new Object[] {}), e);
+				}	
+				
+			} else {
+				LOG.error("MCS # 2 -The Owning Organization is NOT selected in the Template");
+				Throwable e = null;
+				UserExitErrorUtil.throwPluginException(
+						ContractMessages.ERROR_COMP_IDNOT_SELECT, (new Object[] {}), e);
+				
+			}
+								
+		} catch (ConfigurationException e) {
+			LOG.error("Contract Creation Stopped due to ConfigurationException" 
+					 + " While construction of First three letters");
+			UserExitErrorUtil.throwPluginException(e);
+		} catch (ContractException e) {
+			LOG.error("Contract Creation Stopped due to ContractException" 
+					 + " While construction of First three letters");
+			UserExitErrorUtil.throwPluginException(e);
+		}
+		return firstThreeOfName;
+	}
+	
+	
+	
+
+	/**
+	 * Helper Method, which will return the seventh character of the Contract Name
+	 * 
+	 * @param exitContext
+	 * @return
+	 * @throws PluginException 
+	 * @throws ConfigurationException 
+	 */
+	private String constructSeventhCharacter(ExitContext exitContext) throws PluginException {
+		String seventhCharacter = null;	
+		
+		// ContractType is same as Contract Class available in Header section of Contract Editor
+		String contractType =  exitContext.getContract().getContractClass();		
+		
+		if (null != contractType) {
+			try {
+				EmpConfiguration empConfig = ExitConfig.getExitConfig();			
+				HashMap<String, String> hMapContractType = empConfig.getConfigurationsStartingWith(
+														    ContractConstants.PATTERN_CONT_TYPE);
+				
+				for (Entry<String, String> eachRow : hMapContractType.entrySet()) {
+				    String key = eachRow.getKey();
+				    String configContractType = eachRow.getValue();			    
+				     if (null != configContractType 
+				    	&& configContractType.equalsIgnoreCase(contractType)) {			    
+				    	 seventhCharacter = key;	
+				    	 break;
+				     }
+				}
+				
+				
+				// Selected contract Type or Contract Class is Not Configured in Properties file
+				if (null == seventhCharacter) {
+					LOG.error("MCS # 3 - Available Contract Type in ECM System doesn't match with"
+							+ "any Configured CONTRACT Types");
+					Throwable e = null;
+					UserExitErrorUtil.throwPluginException(
+							ContractMessages.ERROR_CONTID_IDNOT_CONFIG, (new Object[] {}), e);
+				}				
+			} catch (ConfigurationException e) {
+				LOG.error("Contract Creation Stopped due to ConfigurationException" 
+						 + " While construction of seventh character");
+				UserExitErrorUtil.throwPluginException(e);
+			}			
+		} else {
+			LOG.error("MCS #4 The contract Type is NOT selected in the Template");
+			Throwable e = null;
+			UserExitErrorUtil.throwPluginException(
+					ContractMessages.ERROR_CONTID_IDNOT_SELECT, (new Object[] {}), e);			
+		}		 
+		
+		return seventhCharacter;
+	}	
+
+}

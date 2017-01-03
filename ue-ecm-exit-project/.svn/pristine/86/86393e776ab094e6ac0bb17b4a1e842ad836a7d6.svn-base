@@ -1,0 +1,144 @@
+package com.emptoris.ecm.exit.mccs.persistenceimpl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import persistence.ExecuteSerialNumByContractName;
+import persistence.MCCSCustomAmdSerialNumUpdate;
+import persistence.MCCS_CUSTOM_AMD_UPDATEPersister;
+
+import com.dicarta.infra.common.PluginException;
+import com.dicarta.infra.logging.ILogger;
+import com.dicarta.infra.logging.Logger;
+import com.dicarta.infra.persistence.common.exception.PersistenceException;
+import com.emptoris.ecm.exit.mccs.constants.ContractConstants;
+import com.emptoris.ecm.exit.mccs.util.UserExitErrorUtil;
+
+public class AmdNumUpdatePersist {
+
+	private static final ILogger LOG = Logger.getLogger(AmdNumUpdatePersist.class);
+
+
+	/**
+	 * @param mccsContractBase
+	 * @return
+	 * @throws PluginException 
+	 */
+	public static int getExecutedSerialNum(String mccsContractBase) throws PluginException {
+		int finalExecutedSerialNumber = 0;
+		
+		MCCSCustomAmdSerialNumUpdate amdNumUpdateVo = new MCCSCustomAmdSerialNumUpdate();		
+		amdNumUpdateVo.setCONTRACT_NAME(mccsContractBase);
+		
+		MCCS_CUSTOM_AMD_UPDATEPersister amdNumUpdatePersister = MCCS_CUSTOM_AMD_UPDATEPersister.getInstance();
+		
+		ExecuteSerialNumByContractName  exeSequNumIter = null;
+		List<MCCSCustomAmdSerialNumUpdate> dbQueryResult= new ArrayList<MCCSCustomAmdSerialNumUpdate>();
+		
+		
+		try {
+			exeSequNumIter = (ExecuteSerialNumByContractName) amdNumUpdatePersister.getSerialNum(amdNumUpdateVo);
+			dbQueryResult = exeSequNumIter.prefetch();//this will bring resultset based on condition we passed
+			
+			if(dbQueryResult.size() == 0)	{
+				// No Row is existing for this contractName ==> Insert the row 
+				 boolean isRecordInserted = insertNewRow(mccsContractBase);
+				 
+				 if(isRecordInserted) { // row insertion was successfull
+					 // Now, as new row is inserted the Default serial number will be [1]					 
+					 finalExecutedSerialNumber = ContractConstants.SEQUENCE_NUM_INITIALIZE;
+					 
+				 }
+			} else if ( dbQueryResult.size() == 1)	{
+				//For this ==> the combination is available in the Table  & has one unique row						
+				for(MCCSCustomAmdSerialNumUpdate eachResult : dbQueryResult) {
+					int executeSerialNum = eachResult.getEXECUTE_SERIAL_NUM();
+					finalExecutedSerialNumber = executeSerialNum + 1;
+				}
+				
+				if(updateTheExistingRow(mccsContractBase)){
+					LOG.debug("Record updated in the Table");
+				}
+			} else {
+				LOG.error("Resultant dbQuery List has more than one row for the provided combination ==> Wrong");
+			}
+			
+		} catch (PersistenceException e) {
+			LOG.error("Error while Access Database - On SELECT Statement");
+			UserExitErrorUtil.throwPluginException(e);
+		}
+		
+		
+		//MCCS_CUSTOM_AMD_GENperister 
+		return finalExecutedSerialNumber;
+	}
+	
+	
+	
+
+	/**
+	 * @param mccsContractBase
+	 * @return
+	 * @throws PluginException 
+	 */
+	private static boolean insertNewRow(String mccsContractBase) throws PluginException {
+		
+		boolean isRecordInserted = false;
+		MCCSCustomAmdSerialNumUpdate amdNumUpdateVo = new MCCSCustomAmdSerialNumUpdate();
+		
+		amdNumUpdateVo.setCONTRACT_NAME(mccsContractBase);
+		amdNumUpdateVo.setEXECUTE_SERIAL_NUM(1);
+		
+		
+		MCCS_CUSTOM_AMD_UPDATEPersister amdNumUpdatePersister = MCCS_CUSTOM_AMD_UPDATEPersister.getInstance();
+		
+		try {
+			int recordInserted = amdNumUpdatePersister.create(amdNumUpdateVo);
+			
+			if (recordInserted == 1) {
+				isRecordInserted = true;	
+				LOG.debug("Insertion of record was successfull");
+			} else {
+				isRecordInserted = false;
+				LOG.debug("Insertion of record was UNSUCESSFULL");
+			}
+		} catch (PersistenceException e) {
+			LOG.error("Error while Access Database - On Insert Statement");
+			UserExitErrorUtil.throwPluginException(e);
+		}
+		return isRecordInserted;
+	}
+
+
+	/**
+	 * @param mccsContractBase
+	 * @return
+	 * @throws PluginException 
+	 */
+	private static boolean updateTheExistingRow(String mccsContractBase) throws PluginException {
+		boolean isRecordUpdated = false;
+		
+		MCCSCustomAmdSerialNumUpdate amdNumUpdateVo = new MCCSCustomAmdSerialNumUpdate();		
+		amdNumUpdateVo.setCONTRACT_NAME(mccsContractBase);
+		
+		MCCS_CUSTOM_AMD_UPDATEPersister amdNumUpdatePersister = MCCS_CUSTOM_AMD_UPDATEPersister.getInstance();
+
+		
+		try	{	
+			int recordUpdated = amdNumUpdatePersister.update(amdNumUpdateVo);
+			if (recordUpdated == 1) {
+				isRecordUpdated = true;
+				LOG.debug(" The Record is updated");
+			} else {
+				isRecordUpdated = false;
+				LOG.debug(" The Record is NOT updated");
+			}
+		}
+		catch(PersistenceException e) {
+			LOG.error("Error while Access Database - On UPDATE Statement");
+			UserExitErrorUtil.throwPluginException(e);
+		}
+		return isRecordUpdated;
+	}
+
+}

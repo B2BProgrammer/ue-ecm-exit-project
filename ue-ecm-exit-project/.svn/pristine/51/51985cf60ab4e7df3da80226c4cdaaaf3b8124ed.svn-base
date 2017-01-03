@@ -1,0 +1,85 @@
+package com.emptoris.ecm.exit.mccs.handler;
+
+import com.dicarta.infra.common.PluginException;
+import com.dicarta.infra.logging.ILogger;
+import com.dicarta.infra.logging.Logger;
+import com.emptoris.ecm.api.intf.Contract;
+import com.emptoris.ecm.api.intf.ExitContext;
+import com.emptoris.ecm.api.intf.User;
+import com.emptoris.ecm.exit.mccs.implementation.AmendmentContractNumberGeneration;
+import com.emptoris.ecm.exit.mccs.implementation.NonAmendmentContractNumberGeneration;
+
+/**
+ * Handler code called before & After CORE CREATE Process
+ * 
+ * @author Aalok.Singhvi
+ *
+ */
+public class ContractCreateHandler {
+	
+	private static final ILogger LOG = Logger.getLogger(ContractCreateHandler.class);
+
+	/**
+	 * Called after the CORE Create process
+	 * 
+	 * @param exitContext
+	 * @throws PluginException 
+	 */
+	public void executePostContracrtCreate(ExitContext exitContext) throws PluginException {
+		 
+		Contract currenctContract = exitContext.getContract(); 
+		User user = exitContext.getUser();
+		
+		// execute logics for amendment contracts
+		if (currenctContract.isAmendment()) {
+			executeForAmendment(exitContext, currenctContract, user);
+		} else {
+		// execute logics for non-amendment contracts
+			executeForNonAmend(exitContext, currenctContract, user);
+		}
+		
+		
+	}
+
+	/**
+	 * Called for only NON amendment contract process
+	 * 
+	 * @param exitContext
+	 * @param currenctContract
+	 * @param user
+	 * @throws PluginException 
+	 */
+	private void executeForNonAmend(ExitContext exitContext,
+			Contract currenctContract, User user) throws PluginException {
+		// Initiation of Business Implementation class for Non Amendment Contract Number Generation
+		NonAmendmentContractNumberGeneration nonAmendCont = new NonAmendmentContractNumberGeneration(exitContext);	
+		
+		LOG.debug("Non AmendmentContractNumber Assignment starts");
+		nonAmendCont.generateNonAmdName(exitContext);
+		LOG.debug("Non AmendmentContractNumberAssignment completes");
+		
+		
+	}
+
+	/**
+	 * Called for amendment contract process
+	 * 
+	 * @param exitContext
+	 * @param currenctContract
+	 * @param user
+	 * @throws PluginException 
+	 */
+	private void executeForAmendment(ExitContext exitContext,
+			Contract currenctContract, User user) throws PluginException {
+		// Initiation of Business Implementation class for Amendment Contract Number Generation
+		AmendmentContractNumberGeneration amdCont = new AmendmentContractNumberGeneration(exitContext);
+		
+		
+		LOG.debug("Non AmendmentContractNumber Assignment starts");
+		amdCont.generateAmendmentName(exitContext);
+		LOG.debug("Non AmendmentContractNumberAssignment completes");
+		
+		
+	}
+
+}

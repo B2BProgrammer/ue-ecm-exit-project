@@ -1,0 +1,134 @@
+<entity_list>
+
+  <entity_definition>
+
+    <entity_name>CONDENAST_BTV_DEFAULTVALUES</entity_name>
+
+    <entity_package_name>
+      persistence
+    </entity_package_name>
+    <data_package_name>
+      persistence
+    </data_package_name>
+    <criteria_package_name>
+      persistence
+    </criteria_package_name>
+    <iterator_package_name>
+      persistence
+    </iterator_package_name>
+
+    <entity_data>
+
+      <class_name>CONDENASTBTVDEFAULTVALUES</class_name>
+      <class_create>true</class_create>
+
+      <attribute_list>
+        
+		<attribute>
+          <attrib_name>m_templatename</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>TEMPLATE_NAME</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+        
+		<attribute>
+          <attrib_name>m_owningorganizationname</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>OWNING_ORGANIZATION_NAME</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+        
+		<attribute>
+          <attrib_name>m_terminternalname</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>TERM_INTERNAL_NAME</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+		
+		<attribute>
+          <attrib_name>m_defaultdatetermvalue</attrib_name>
+          <attrib_type>Date</attrib_type>
+          <db_field_name>DEFAULT_DATE_TERM_VALUE</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+		
+		<attribute>
+          <attrib_name>m_defaultnumerictermvalue</attrib_name>
+          <attrib_type>int</attrib_type>
+          <db_field_name>DEFAULT_NUMERIC_TERM_VALUE</db_field_name>
+          <iskey>false</iskey>
+		</attribute>
+		
+		<attribute>
+          <attrib_name>m_defaultstringtermvalue</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>DEFAULT_STRING_TERM_VALUE</db_field_name>
+          <iskey>false</iskey>
+		</attribute>
+		  
+		<attribute>
+          <attrib_name>m_masterlovterm</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>MASTER_LOV_TERM</db_field_name>
+          <iskey>false</iskey>
+		</attribute>
+		
+		
+	</attribute_list>
+		 
+		 
+    </entity_data>
+	<function_list>
+        <function_definition>
+
+			<func_type>findByCriteria</func_type>
+			<func_name>getBTVSeq</func_name>
+			<iterator_class_name>SeqBTVIterator</iterator_class_name>
+
+			<criteria_class_def>
+				<class_name>CONDENASTBTVDEFAULTVALUES</class_name>
+				<attribute_list>
+					<attribute>
+						<attrib_name>m_templatename</attrib_name>
+						<attrib_type>String</attrib_type>
+					</attribute>
+				</attribute_list>
+			</criteria_class_def>
+
+			<data_class_def>
+				<class_name>CONDENASTBTVDEFAULTVALUES</class_name>
+			</data_class_def>
+
+			<sql_statement_def_list>
+				<sql_statement_def>
+
+				<sql_string>select TEMPLATE_NAME,OWNING_ORGANIZATION_NAME,TERM_INTERNAL_NAME,DEFAULT_DATE_TERM_VALUE,DEFAULT_NUMERIC_TERM_VALUE,DEFAULT_STRING_TERM_VALUE,MASTER_LOV_TERM from CONDENAST_BTV_DEFAULTVALUES where TEMPLATE_NAME=? and OWNING_ORGANIZATION_NAME=?</sql_string>
+
+				<sql_map_preparestmt>
+					<class_name>CONDENASTBTVDEFAULTVALUES</class_name>
+					<attrib_name>m_templatename</attrib_name>
+					<attrib_name>m_owningorganizationname</attrib_name>
+				</sql_map_preparestmt>
+
+				<sql_map_resultset>
+					<class_name>CONDENASTBTVDEFAULTVALUES</class_name>
+					<attrib_name>m_templatename</attrib_name>
+					<attrib_name>m_owningorganizationname</attrib_name>
+					<attrib_name>m_terminternalname</attrib_name>
+					<attrib_name>m_defaultdatetermvalue</attrib_name>
+					<attrib_name>m_defaultnumerictermvalue</attrib_name>
+					<attrib_name>m_defaultstringtermvalue</attrib_name>
+					<attrib_name>m_masterlovterm</attrib_name>
+				</sql_map_resultset>
+
+				</sql_statement_def>
+		</sql_statement_def_list>
+
+      </function_definition>
+	</function_list>	
+     
+
+
+  </entity_definition>
+
+</entity_list>

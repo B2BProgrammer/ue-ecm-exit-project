@@ -1,0 +1,6 @@
+try {
+    com.emptoris.ecm.exit.SSOClient ssoClient = new com.emptoris.ecm.exit.SSOClient();
+    ssoClient.authenticate(requestContext, resultContext);
+} catch ( Exception ex ) {
+	throw new com.dicarta.infra.common.PluginException(ex.getMessage(), ex);
+}

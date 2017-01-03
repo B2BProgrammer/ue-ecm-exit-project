@@ -1,0 +1,22 @@
+package com.emptoris.ecm.exit.mccs.constants;
+
+/**
+ * Class to hold all the variables used as constants in the implementation work
+ * 
+ * @author Aalok.Singhvi
+ *
+ */
+public interface ContractConstants {
+	
+	String HYPHEN_CHARACTER = "-";
+	char ZERO_FILLER = '0';
+	char SPACE_FILLER = ' ';
+	char CHAR_D = 'D';
+	char CHAR_M = 'M';
+	String STR_P = "P";
+	String PATTERN_COMP_ID = "MCCS.autonaming.company.id.";
+	String PATTERN_CONT_TYPE = "MCCS.autonaming.contract.type.";
+	String SEQUENCE_NUM_END = "9999";
+	int SEQUENCE_NUM_INITIALIZE = 1;
+
+}

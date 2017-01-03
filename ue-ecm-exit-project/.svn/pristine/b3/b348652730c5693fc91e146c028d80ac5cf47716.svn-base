@@ -1,0 +1,57 @@
+package com.emptoris.ecm.exit.mccs.persistenceimpl;
+
+import java.sql.Date;
+
+import com.dicarta.infra.common.PluginException;
+import com.dicarta.infra.logging.ILogger;
+import com.dicarta.infra.logging.Logger;
+import com.dicarta.infra.persistence.common.exception.PersistenceException;
+import com.emptoris.ecm.api.intf.Contract;
+import com.emptoris.ecm.exit.mccs.util.UserExitErrorUtil;
+
+import persistence.MCCSContractName;
+import persistence.MCCS_CONTRACT_NAMEPersister;
+
+/**
+ * Class used for persistence of LOG information into the Database
+ * 
+ * @author Aalok.Singhvi
+ *
+ */
+public class ContractNamePersister {
+	
+	private static ILogger LOG = Logger.getLogger(ContractNamePersister.class);
+
+	/**
+	 * Persists the following information into the log table
+		a)	Date and Time of Transaction (at Server Time Zone)
+		b)	Contract Name
+		c)	Contract Number
+
+	 * @param currentContract
+	 * @param mccsContractName
+	 * @throws PluginException 
+	 * @throws PersistenceException
+	 */
+	public static void persist(Contract currentContract, String mccsContractName) 
+					throws PluginException {
+		
+		// Get the persister object, create a new domian object, populate its data
+		MCCS_CONTRACT_NAMEPersister persister = MCCS_CONTRACT_NAMEPersister.getInstance();
+		MCCSContractName newNameObj = new MCCSContractName();
+		newNameObj.setContractname(mccsContractName);
+		newNameObj.setContractnumber(currentContract.getNumber());
+		newNameObj.setTransactiondate(new Date(System.currentTimeMillis()));
+		
+		// Save the new domain object
+		try {
+			persister.create(newNameObj);
+		} catch (PersistenceException e) {
+			LOG.error("Contract LOGGING process Stopped due to a persistence issue."
+					+ e.getMessage());
+			UserExitErrorUtil.throwPluginException(e);
+		}
+			
+	}
+
+}

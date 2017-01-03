@@ -1,0 +1,12 @@
+-- Execute once for each category with existing contracts
+
+DECLARE 
+   cName varchar2(8 char)  := '&&contractPrefix.';
+   x NUMBER := '&&highestUsedSeqNum.';
+
+BEGIN
+   FOR i IN 1..x LOOP
+      insert into mccs_contract_name (CONTRACT_NAME,CONTRACT_NUMBER,TRANSACTION_DATE) values (concat(cName,TO_CHAR(i,'FM0000')),-1,null);
+   END LOOP;
+   COMMIT;
+END;

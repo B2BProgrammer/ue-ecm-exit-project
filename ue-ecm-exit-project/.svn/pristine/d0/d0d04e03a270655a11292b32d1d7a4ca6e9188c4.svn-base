@@ -1,0 +1,1 @@
+delete from mccs_contract_name where contract_name is not null;

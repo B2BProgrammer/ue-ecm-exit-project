@@ -1,0 +1,71 @@
+error_message_filename=ecm_exit_messages.properties
+
+#Custom Flags
+MCCS.autonaming.feature.enabled=true
+
+## Custom Flags for different Design
+mccs.nonamd.name.generate=true
+mccs.amd.name.generate=true
+mccs.amd.name.update=true
+
+
+
+#Company ID and Company Name Configuration
+MCCS.autonaming.company.id.ALM=ALBANY MCCS
+MCCS.autonaming.company.id.BAM=BARSTOW MCCS
+MCCS.autonaming.company.id.BNM=BANGOR\\BREMERTON ENLISTED CLUB
+MCCS.autonaming.company.id.BUM=CAMP BUTLER MCCS
+MCCS.autonaming.company.id.CLM=CAMP LEJEUNE MCCS
+MCCS.autonaming.company.id.CPM=CHERRY POINT MCCS
+MCCS.autonaming.company.id.EIM=8TH & I BARRACKS MCCS
+MCCS.autonaming.company.id.ELM=CAMP ALLEN MCCS
+MCCS.autonaming.company.id.GCM=GARDEN CITY ENLISTED CLUB
+MCCS.autonaming.company.id.H01=HEADQUARTERS OPERATING FUND
+MCCS.autonaming.company.id.H03=HEADQUARTERS IT FUND
+MCCS.autonaming.company.id.H07=CENTRAL CONSTRUCTION FUND
+MCCS.autonaming.company.id.H09=RETAIL OPERATIONS
+MCCS.autonaming.company.id.H21=WOUNDED WARRIORS REGIMENT
+MCCS.autonaming.company.id.H35=CMC MC BALL
+MCCS.autonaming.company.id.HHM=HENDERSON HALL MCCS
+MCCS.autonaming.company.id.IWM=IWAKUNI MCCS
+MCCS.autonaming.company.id.KBM=KANEOHE BAY MCCS
+MCCS.autonaming.company.id.MAM=MARFORRES
+MCCS.autonaming.company.id.MRM=MIRAMAR MCCS
+MCCS.autonaming.company.id.NRM=NEW RIVER MCCS
+MCCS.autonaming.company.id.PNM=CAMP PENDLETON MCCS
+MCCS.autonaming.company.id.QUM=QUANTICO MCCS
+MCCS.autonaming.company.id.RGM=RICHARDS-GEBAUR
+MCCS.autonaming.company.id.SCM=SOUTH CAROLINA MCCS
+MCCS.autonaming.company.id.SDM=SAN DIEGO MCCS
+MCCS.autonaming.company.id.TWM=TWENTYNINE PALMS MCCS
+MCCS.autonaming.company.id.YUM=YUMA MCCS
+
+#Contract Type Configuration
+MCCS.autonaming.contract.type.A=AGREEMENT
+MCCS.autonaming.contract.type.B=BLANKET PURCHASE AGREEMENT
+MCCS.autonaming.contract.type.C=CONTRACT
+MCCS.autonaming.contract.type.D=INDEFINITE DELIVERY CONTRACT (DEFINITE QUANTITY or INDEFINITE QUANTITY)  (includes requirements contracts)
+MCCS.autonaming.contract.type.E=CONSTRUCTION CONTRACT
+MCCS.autonaming.contract.type.F=DELIVERY/TASK ORDER (placed against existing MCCS contracts or contracts of other Government departments/agencies)
+MCCS.autonaming.contract.type.G=BASIC ORDERING AGREEMENT
+MCCS.autonaming.contract.type.H=REVENUE GENERATING CONTRACT (concession, vending, barber, fast food, etc.)
+MCCS.autonaming.contract.type.I=(Reserved)
+MCCS.autonaming.contract.type.J=(Reserved)
+MCCS.autonaming.contract.type.K=SHORT TERM COMMODITY SALES/CONCESSIONS CONTRACTS (30 days or less)
+MCCS.autonaming.contract.type.L=INDIVIDUAL SERVICE CONTRACT (instructors, entertainers)
+MCCS.autonaming.contract.type.M=(See P)
+MCCS.autonaming.contract.type.O=BLANKET PURCHASE AGREEMENT RELEASE
+MCCS.autonaming.contract.type.P=PURCHASE ORDER (use M when P exhausted)
+MCCS.autonaming.contract.type.Q=REQUEST FOR QUOTATION
+MCCS.autonaming.contract.type.R=REQUEST FOR PROPOSAL
+MCCS.autonaming.contract.type.S=RESALE PURCHASES (if made using the non-Exchange purchasing system)
+MCCS.autonaming.contract.type.T=(Reserved for local use, such as internal transfer of funds)
+MCCS.autonaming.contract.type.V=NONAPPROPRIATED FUND PURCHASE CARD PURCHASES
+MCCS.autonaming.contract.type.W=WAREHOUSE INVENTORY ITEM (Camp Butler only)
+MCCS.autonaming.contract.type.X=DIRECT DELIVERY AGREEMENT (includes open purchase orders and retail/resale purchase orders)
+MCCS.autonaming.contract.type.Y=RECEIVER
+MCCS.autonaming.contract.type.Z=PURCHASE REQUEST
+
+
+
+

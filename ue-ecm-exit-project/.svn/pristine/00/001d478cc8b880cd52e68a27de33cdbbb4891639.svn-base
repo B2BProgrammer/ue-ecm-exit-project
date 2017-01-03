@@ -1,0 +1,162 @@
+<entity_list>
+
+  <entity_definition>
+
+    <entity_name>MCCS_CUSTOM_TB_NONAMD</entity_name>
+
+    <entity_package_name>
+      persistence
+    </entity_package_name>
+    <data_package_name>
+      persistence
+    </data_package_name>
+    <criteria_package_name>
+      persistence
+    </criteria_package_name>
+    <iterator_package_name>
+      persistence
+    </iterator_package_name>
+
+    <entity_data>
+
+      <class_name>MCCSCustomNonAmdSerialNumber</class_name>
+      <class_create>true</class_create>
+
+      <attribute_list>
+        <attribute>
+          <attrib_name>m_COMPANY_ID</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>COMPANY_ID</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+        
+		<attribute>
+          <attrib_name>m_YEAR</attrib_name>
+          <attrib_type>int</attrib_type>
+          <db_field_name>YEAR</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+        
+    <attribute>
+          <attrib_name>m_CONTRACT_TYPE</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>CONTRACT_TYPE</db_field_name>
+          <iskey>false</iskey>
+      </attribute>
+        
+        
+		<attribute>
+          <attrib_name>m_SERIAL_NUMBER</attrib_name>
+          <attrib_type>int</attrib_type>
+          <db_field_name>SERIAL_NUMBER</db_field_name>
+          <iskey>false</iskey>
+        </attribute>		
+	</attribute_list>
+ </entity_data>
+ 
+ 
+ <function_list>
+        <function_definition>
+
+                    <func_type>create</func_type>
+                    <func_name>create</func_name>
+                    
+
+                    <sql_statement_def_list>
+                           <sql_statement_def>
+                           <sql_string>insert into MCCS_CUSTOM_TB_NONAMD(COMPANY_ID,YEAR,CONTRACT_TYPE,SERIAL_NUM) values (?,?,?,?)</sql_string>
+
+                           <sql_map_preparestmt>
+                               <class_name>MCCSCustomNonAmdSerialNumber</class_name>
+                                 <attrib_name>m_COMPANY_ID</attrib_name>
+                                 <attrib_name>m_YEAR</attrib_name>
+                                 <attrib_name>m_CONTRACT_TYPE</attrib_name>   
+                                 <attrib_name>m_SERIAL_NUMBER</attrib_name>                              
+                           </sql_map_preparestmt>
+                           </sql_statement_def>
+            	 </sql_statement_def_list>
+      </function_definition>
+      
+      
+       <function_definition> 
+        <func_type>update</func_type>
+        <func_name>incrementSerialNum</func_name>
+            <sql_statement_def_list>
+                 <sql_statement_def>
+                         <sql_string>update MCCS_CUSTOM_TB_NONAMD set SERIAL_NUM = SERIAL_NUM+1 where COMPANY_ID=? AND YEAR=? AND CONTRACT_TYPE=? </sql_string>
+                      <sql_map_preparestmt>
+                          <class_name>MCCSCustomNonAmdSerialNumber</class_name>
+                             <attrib_name>m_COMPANY_ID</attrib_name>
+                             <attrib_name>m_YEAR</attrib_name>
+                             <attrib_name>m_CONTRACT_TYPE</attrib_name>
+                             
+                      </sql_map_preparestmt>
+                   </sql_statement_def>
+              </sql_statement_def_list>
+      </function_definition>
+      
+      
+      <function_definition>
+        <func_type>findByCriteria</func_type>
+        <func_name>getSerialNum</func_name>
+        <iterator_class_name>SerialNumByComibinationIterator</iterator_class_name>
+
+        <criteria_class_def>
+          <class_name>MCCSCustomNonAmdSerialNumber</class_name>
+            <attribute_list>
+    			    <attribute>
+        				  <attrib_name>m_COMPANY_ID</attrib_name>
+        			  	<attrib_type>String</attrib_type>
+          			<db_field_name>COMPANY_ID</db_field_name>
+         				 <iskey>false</iskey>
+        		</attribute>
+        
+					<attribute>
+          		<attrib_name>m_YEAR</attrib_name>
+          		<attrib_type>int</attrib_type>
+          		<db_field_name>YEAR</db_field_name>
+          		<iskey>false</iskey>
+        	</attribute>
+        
+    			<attribute>
+         				 <attrib_name>m_CONTRACT_TYPE</attrib_name>
+          			<attrib_type>String</attrib_type>
+          			<db_field_name>CONTRACT_TYPE</db_field_name>
+          			<iskey>false</iskey>
+      		</attribute>
+						</attribute_list>
+        </criteria_class_def>
+
+        <data_class_def>
+          <class_name>MCCSCustomNonAmdSerialNumber</class_name>
+        </data_class_def>
+
+        <sql_statement_def_list>
+          <sql_statement_def>
+
+            <sql_string>select distinct COMPANY_ID,YEAR,CONTRACT_TYPE,SERIAL_NUM from MCCS_CUSTOM_TB_NONAMD where COMPANY_ID=? AND YEAR=? AND CONTRACT_TYPE=?</sql_string>
+
+            <sql_map_preparestmt>
+              <class_name>MCCSCustomNonAmdSerialNumber</class_name>
+              <attrib_name>m_COMPANY_ID</attrib_name>
+              <attrib_name>m_YEAR</attrib_name>
+              <attrib_name>m_CONTRACT_TYPE</attrib_name>
+            </sql_map_preparestmt>
+
+            <sql_map_resultset>
+              <class_name>MCCSCustomNonAmdSerialNumber</class_name>
+              	<attrib_name>m_COMPANY_ID</attrib_name>
+              	<attrib_name>m_YEAR</attrib_name>
+              	<attrib_name>m_CONTRACT_TYPE</attrib_name>
+              	<attrib_name>m_SERIAL_NUMBER</attrib_name>
+            </sql_map_resultset>
+
+          </sql_statement_def>
+        </sql_statement_def_list>
+
+      </function_definition>      
+  </function_list>    
+
+  </entity_definition>
+
+</entity_list>

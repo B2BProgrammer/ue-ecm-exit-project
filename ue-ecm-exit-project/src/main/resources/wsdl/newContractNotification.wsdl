@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://emptoris.dsa.cn.com/service" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://emptoris.dsa.cn.com/" name="newContractNotification" targetNamespace="http://emptoris.dsa.cn.com/service">
+<wsdl:import location="NewContractWs.wsdl" namespace="http://emptoris.dsa.cn.com/"></wsdl:import>
+<wsdl:binding name="newContractNotificationSoapBinding" type="ns1:NewContractWs">
+<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+<wsdl:operation name="newContractNotification">
+<soap:operation soapAction="" style="document"/>
+<wsdl:input name="newContractNotification">
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output name="newContractNotificationResponse">
+<soap:body use="literal"/>
+</wsdl:output>
+<wsdl:fault name="NotificationFailureFault">
+<soap:fault name="NotificationFailureFault" use="literal"/>
+</wsdl:fault>
+<wsdl:fault name="MissingDataFault">
+<soap:fault name="MissingDataFault" use="literal"/>
+</wsdl:fault>
+</wsdl:operation>
+</wsdl:binding>
+<wsdl:service name="newContractNotification">
+<wsdl:port binding="tns:newContractNotificationSoapBinding" name="newContractNotification">
+<soap:address location="http://slcnpde093:8040/services/emptoris/newcontract"/>
+</wsdl:port>
+</wsdl:service>
+</wsdl:definitions>

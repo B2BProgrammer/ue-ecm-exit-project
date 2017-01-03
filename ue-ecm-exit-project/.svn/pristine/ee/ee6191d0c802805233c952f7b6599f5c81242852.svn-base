@@ -1,0 +1,163 @@
+/**
+ * 
+ */
+package com.emptoris.ecm.exit.mccs.implementation;
+
+import com.dicarta.infra.common.PluginException;
+import com.dicarta.infra.logging.ILogger;
+import com.dicarta.infra.logging.Logger;
+import com.emptoris.common.config.ConfigurationException;
+import com.emptoris.common.config.EmpConfiguration;
+import com.emptoris.ecm.api.exception.ContractException;
+import com.emptoris.ecm.api.intf.Contract;
+import com.emptoris.ecm.api.intf.ExitContext;
+import com.emptoris.ecm.exit.common.config.ExitConfig;
+import com.emptoris.ecm.exit.mccs.constants.ConfigFeatureFlagKeys;
+import com.emptoris.ecm.exit.mccs.constants.ContractConstants;
+import com.emptoris.ecm.exit.mccs.persistenceimpl.AmdNumUpdatePersist;
+import com.emptoris.ecm.exit.mccs.persistenceimpl.ContractNamePersister;
+import com.emptoris.ecm.exit.mccs.util.UserExitCommonUtil;
+import com.emptoris.ecm.exit.mccs.util.UserExitErrorUtil;
+
+/**
+ * Business Implementation class-
+ * 
+ * Used to update the Amendment contract name according to mccs conditions
+ * 
+ * @author Aalok.Singhvi
+ *
+ */
+public class AmendmentContractNumberUpdate {
+	
+	private static final ILogger LOG = Logger.getLogger(AmendmentContractNumberUpdate.class);
+
+	public AmendmentContractNumberUpdate(ExitContext exitContext) {
+		LOG.info("Begin of AmendmentContractNumberUpdate ");
+		
+		
+		LOG.info("End of AmendmentContractNumberUpdate ");	
+	}
+	
+	
+	/**
+	 * Helper method for doing the check
+	 * a) Flag feature Enabled
+	 * @param exitContext
+	 * @return
+	 * @throws PluginException 
+	 */
+	private boolean isFeatureEnabled(ExitContext exitContext) throws PluginException {
+		
+		boolean isFeatureEnabled = false;
+		
+		try {
+			EmpConfiguration empConfig = ExitConfig.getExitConfig();
+			String flagKeyPart = ConfigFeatureFlagKeys.MCCS_AMEND_NAME_GENERATE;
+			String flagValuePart = empConfig.getRequiredStringConfiguration(flagKeyPart);
+			
+				if (flagValuePart.equalsIgnoreCase("true")) {
+					LOG.debug("This Bussiness Implementation is ENABLED");
+					isFeatureEnabled = true;
+				} else if (flagValuePart.equalsIgnoreCase("false")) {
+					LOG.debug("This Bussiness Implementation is DISABLED");
+					isFeatureEnabled = false;
+				}
+		} catch (ConfigurationException e) {
+			LOG.error("Contract Execution Stopped due to ConfigurationException" 
+					 + " While accesing Enablement Flag");
+			UserExitErrorUtil.throwPluginException(e);
+			
+		}	
+		return isFeatureEnabled;
+	}
+	
+	/**
+	 * Helper method - for doing the check
+	 * a) Amendment or Not
+	 * @param exitContext
+	 * @return
+	 */
+	private boolean isAnyPreConditions(ExitContext exitContext) {
+		boolean isAnyPreConditions = false;
+		if (exitContext.getContract().isAmendment()) {
+			LOG.debug("The Current Contract Context is AMENDMENT");
+			isAnyPreConditions = true;
+		} 
+		return isAnyPreConditions;
+	}
+
+	/**
+	 * Public Method called from Handler for doing the Generation of Amendment Name
+	 * 
+	 * @param exitContext
+	 * @throws PluginException 
+	 */
+	public final void updateAmendmentContractNumber(ExitContext exitContext) 
+				throws PluginException {
+		if (isFeatureEnabled(exitContext) && isAnyPreConditions(exitContext)) {
+			updateAmdContLogic(exitContext);
+			
+		} else {
+			LOG.debug("Amendment Contract Number update couldn't be Implemented");
+		}	
+		
+	}
+
+
+	/**
+	 * Core method for updating the contract name according to MCCS conditions
+	 * 
+	 * @param exitContext
+	 * @throws PluginException 
+	 */
+	private void updateAmdContLogic(ExitContext exitContext) throws PluginException {
+		
+		LOG.debug("Enter - update AmendmentContractName afer Execution");
+		Contract amdContract = exitContext.getContract();
+		
+		if (null != amdContract) {
+			try {
+				String mccsContractAmendName = amdContract.getName();
+				// Pull the first 12 characters of amendment contract name
+				String mccsContractBase = mccsContractAmendName.substring(0, 12);
+
+				StringBuffer sbAmdExecNumber = new StringBuffer();		
+
+				//1 append the 12 characters to buffer Eg : H0313-Z-0003
+				sbAmdExecNumber.append(mccsContractBase);
+				
+				//2 append the " " to buffer  : Eg : H0313-Z-0003 
+				sbAmdExecNumber.append(ContractConstants.SPACE_FILLER);
+				
+				// 3. Append the executed sequence number 
+				int finalExecutedSerialNum =  AmdNumUpdatePersist.getExecutedSerialNum(mccsContractBase);				
+							
+				String executedVersionNumberStr = Integer.toString(finalExecutedSerialNum);				
+				String exeAmndVersionNum = UserExitCommonUtil.padCharsLeft(
+											executedVersionNumberStr, 
+											ContractConstants.ZERO_FILLER, 3);
+				sbAmdExecNumber.append(exeAmndVersionNum);
+				
+				String finalMCCSContractExecutedName = sbAmdExecNumber.toString();
+				//update the final name to the contract
+				amdContract.updateName(finalMCCSContractExecutedName);
+
+				
+			   ContractNamePersister.persist(amdContract, finalMCCSContractExecutedName);
+				
+				
+			} catch (ContractException e) {
+				LOG.error("Contract Execution Stopped due to ContractException");
+				UserExitErrorUtil.throwPluginException(e);
+			}			
+				
+			LOG.debug("The MCCS AMENDMENT Contract Number update after execute was Successfull as" 
+						+ amdContract.getName());
+		} else {
+			LOG.error(" Amendment Contact is invalid");
+			
+		}
+		
+	}
+	
+}

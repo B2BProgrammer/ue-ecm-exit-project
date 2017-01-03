@@ -1,0 +1,152 @@
+package com.emptoris.ecm.exit.mccs.persistenceimpl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import persistence.DraftSerialNumByComibinationIterator;
+import persistence.MCCSCustomAmdSerialNumGeneration;
+import persistence.MCCS_CUSTOM_AMD_GENPersister;
+
+import com.dicarta.infra.common.PluginException;
+import com.dicarta.infra.logging.ILogger;
+import com.dicarta.infra.logging.Logger;
+import com.dicarta.infra.persistence.common.exception.PersistenceException;
+import com.emptoris.ecm.exit.mccs.constants.ContractConstants;
+import com.emptoris.ecm.exit.mccs.util.UserExitErrorUtil;
+
+/**
+ * @author Aalok.Singhvi
+ *
+ */
+public class AmdNumGenerationPersist {
+
+	private static final ILogger LOG = Logger.getLogger(AmdNumGenerationPersist.class);
+
+
+
+
+	/**
+	 * @param presentContractName
+	 * @return 
+	 * @throws PluginException 
+	 */
+	public static int getDraftSerialNumber(String presentContractName) throws PluginException {
+		int finalDraftSerialNumber = 0;
+		
+		MCCSCustomAmdSerialNumGeneration amdNumGenVo = new MCCSCustomAmdSerialNumGeneration();
+		
+		amdNumGenVo.setCONTRACT_NAME(presentContractName);
+		
+		MCCS_CUSTOM_AMD_GENPersister amdNumGenPersister = MCCS_CUSTOM_AMD_GENPersister.getInstance();
+		
+		DraftSerialNumByComibinationIterator  draftAmdSequNumIter = null;
+		List<MCCSCustomAmdSerialNumGeneration> dbQueryResult= new ArrayList<MCCSCustomAmdSerialNumGeneration>();
+		
+		
+		try {
+			draftAmdSequNumIter = (DraftSerialNumByComibinationIterator) amdNumGenPersister.getSerialNum(amdNumGenVo);
+			dbQueryResult = draftAmdSequNumIter.prefetch();//this will bring resultset based on condition we passed
+			
+			if(dbQueryResult.size() == 0) {
+				// No Row is existing for this contractName ==> Insert the row 
+				 boolean isRecordInserted = insertNewRow(presentContractName);
+				 
+				 if(isRecordInserted) { // row insertion was successful
+					 // Now, as new row is inserted the Default serial number will be [1]					
+					 finalDraftSerialNumber = ContractConstants.SEQUENCE_NUM_INITIALIZE;	
+					 
+				 }
+			} else if (dbQueryResult.size() == 1) {
+				//For this ==> the contractName is available in the Table & has one unique row								
+				for(MCCSCustomAmdSerialNumGeneration eachResult : dbQueryResult) {
+					int serialnumber = eachResult.getDRAFT_SERIAL_NUM();
+					finalDraftSerialNumber = serialnumber+1;
+				}
+				
+				if(updateTheExistingRow(presentContractName)){
+					LOG.debug("Record updated in the Table");
+				}
+			} else {
+				LOG.error("Resultant dbQuery List has more than one row for the provided combination ==> Wrong");
+			}
+			
+		} catch (PersistenceException e) {
+			LOG.error("Error while Access Database - On SELECT Statement");
+			UserExitErrorUtil.throwPluginException(e);
+		}
+		
+		
+		//MCCS_CUSTOM_AMD_GENperister 
+		return finalDraftSerialNumber;
+	}
+	
+	
+	
+/**
+ * @param presentContractName
+ * @return
+ * @throws PluginException 
+ */
+private static boolean insertNewRow(String presentContractName) throws PluginException {		
+		boolean isRecordInserted = false;
+	
+		MCCSCustomAmdSerialNumGeneration amdNumGenVo = new MCCSCustomAmdSerialNumGeneration();		
+		amdNumGenVo.setCONTRACT_NAME(presentContractName);
+		amdNumGenVo.setDRAFT_SERIAL_NUM(1);
+		
+		
+		MCCS_CUSTOM_AMD_GENPersister amdNumGenPersister = MCCS_CUSTOM_AMD_GENPersister.getInstance();
+		
+		try {
+			int recordInserted = amdNumGenPersister.create(amdNumGenVo);
+			
+			if (recordInserted == 1) {
+				isRecordInserted = true;	
+				LOG.debug("Insertion of record was successfull");
+			} else {
+				isRecordInserted = false;
+				LOG.debug("Insertion of record was UNSUCESSFULL");
+			}
+		} catch (PersistenceException e) {
+			LOG.error("Error while Access Database - On Insert Statement");
+			UserExitErrorUtil.throwPluginException(e);
+		}
+		return isRecordInserted;
+	}
+	
+	
+	
+
+	/**
+	 * @param presentContractName
+	 * @return
+	 * @throws PluginException 
+	 */
+	private static boolean updateTheExistingRow(String presentContractName) throws PluginException {
+		boolean isRecordUpdated = false;
+		
+		MCCSCustomAmdSerialNumGeneration amdNumGenVo = new MCCSCustomAmdSerialNumGeneration();		
+		amdNumGenVo.setCONTRACT_NAME(presentContractName);
+		
+		MCCS_CUSTOM_AMD_GENPersister amdNumGenPersister = MCCS_CUSTOM_AMD_GENPersister.getInstance();
+
+		
+		try	{	
+			int recordUpdated = amdNumGenPersister.update(amdNumGenVo);
+			if (recordUpdated == 1) {
+				isRecordUpdated = true;
+				LOG.debug(" The Record is updated");
+			} else {
+				isRecordUpdated = false;
+				LOG.debug(" The Record is NOT updated");
+			}
+		}
+		catch(PersistenceException e) {
+			LOG.error("Error while Access Database - On UPDATE Statement");
+			UserExitErrorUtil.throwPluginException(e);
+		}
+		return isRecordUpdated;
+	}
+
+
+}

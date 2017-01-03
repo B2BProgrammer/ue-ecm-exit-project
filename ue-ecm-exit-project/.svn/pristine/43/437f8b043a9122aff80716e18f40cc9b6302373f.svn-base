@@ -1,0 +1,15 @@
+package com.emptoris.ecm.exit.mccs.constants;
+
+/**
+ * Class to hold all the constants used in pulling information from properties file
+ * 
+ * @author Aalok.Singhvi
+ *
+ */
+public interface ConfigConstants {
+
+	
+	
+   String MCCS_CONFIG_COMPANY_ID =	"mccs.config.company.id";
+   String MCCS_CONFIG_CONT_TYPE = "mccs.config.cont.type";
+}

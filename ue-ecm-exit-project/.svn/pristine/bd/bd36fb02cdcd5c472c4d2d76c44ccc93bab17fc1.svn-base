@@ -1,0 +1,131 @@
+<entity_list>
+
+  <entity_definition>
+
+    <entity_name>MCCS_CUSTOM_AMD_GEN</entity_name>
+
+    <entity_package_name>
+      persistence
+    </entity_package_name>
+    <data_package_name>
+      persistence
+    </data_package_name>
+    <criteria_package_name>
+      persistence
+    </criteria_package_name>
+    <iterator_package_name>
+      persistence
+    </iterator_package_name>
+
+    <entity_data>
+
+      <class_name>MCCSCustomAmdSerialNumGeneration</class_name>
+      <class_create>true</class_create>
+
+      <attribute_list>
+        <attribute>
+          <attrib_name>m_CONTRACT_NAME</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>CONTRACT_NAME</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+        
+				<attribute>
+          <attrib_name>m_DRAFT_SERIAL_NUM</attrib_name>
+          <attrib_type>int</attrib_type>
+          <db_field_name>DRAFT_SERIAL_NUM</db_field_name>
+          <iskey>false</iskey>
+        </attribute>		
+	</attribute_list>
+ </entity_data>
+ 
+ 
+ <function_list>
+        <function_definition>
+
+                    <func_type>create</func_type>
+                    <func_name>create</func_name>
+                    
+
+                    <sql_statement_def_list>
+                           <sql_statement_def>
+                           <sql_string>insert into MCCS_CUSTOM_AMD_GEN(CONTRACT_NAME,DRAFT_SERIAL_NUM) values (?,?)</sql_string>
+
+                           <sql_map_preparestmt>
+                               <class_name>MCCSCustomAmdSerialNumGeneration</class_name>
+                                 <attrib_name>m_CONTRACT_NAME</attrib_name>
+                                 <attrib_name>m_DRAFT_SERIAL_NUM</attrib_name>                                                            
+                           </sql_map_preparestmt>
+                           </sql_statement_def>
+            	 </sql_statement_def_list>
+      </function_definition>
+      
+      
+       <function_definition> 
+        <func_type>update</func_type>
+        <func_name>incrementSerialNum</func_name>
+            <sql_statement_def_list>
+                 <sql_statement_def>
+                         <sql_string>update MCCS_CUSTOM_AMD_GEN set DRAFT_SERIAL_NUM = DRAFT_SERIAL_NUM+1 where CONTRACT_NAME=? </sql_string>
+                      <sql_map_preparestmt>
+                          <class_name>MCCSCustomAmdSerialNumGeneration</class_name>
+                             <attrib_name>m_CONTRACT_NAME</attrib_name>
+                      </sql_map_preparestmt>
+                   </sql_statement_def>
+              </sql_statement_def_list>
+      </function_definition>
+      
+      
+      <function_definition>
+        <func_type>findByCriteria</func_type>
+        <func_name>getSerialNum</func_name>
+        <iterator_class_name>DraftSerialNumByComibinationIterator</iterator_class_name>
+
+        <criteria_class_def>
+          <class_name>MCCSCustomAmdSerialNumGeneration</class_name>
+            <attribute_list>
+    			     <attribute>
+       					   <attrib_name>m_CONTRACT_NAME</attrib_name>
+          				<attrib_type>String</attrib_type>
+          				<db_field_name>CONTRACT_NAME</db_field_name>
+          				<iskey>false</iskey>
+        				</attribute>
+        
+							<attribute>
+          				<attrib_name>m_DRAFT_SERIAL_NUM</attrib_name>
+          				<attrib_type>int</attrib_type>
+          				<db_field_name>DRAFT_SERIAL_NUM</db_field_name>
+          				<iskey>false</iskey>
+        			</attribute>	
+						</attribute_list>
+        </criteria_class_def>
+
+        <data_class_def>
+          <class_name>MCCSCustomAmdSerialNumGeneration</class_name>
+        </data_class_def>
+
+        <sql_statement_def_list>
+          <sql_statement_def>
+
+            <sql_string>select distinct CONTRACT_NAME,DRAFT_SERIAL_NUM from MCCS_CUSTOM_AMD_GEN where CONTRACT_NAME=?</sql_string>
+
+            <sql_map_preparestmt>
+              <class_name>MCCSCustomAmdSerialNumGeneration</class_name>
+              	<attrib_name>m_CONTRACT_NAME</attrib_name>
+            </sql_map_preparestmt>
+
+            <sql_map_resultset>
+              <class_name>MCCSCustomAmdSerialNumGeneration</class_name>
+              	<attrib_name>m_CONTRACT_NAME</attrib_name>
+              	<attrib_name>m_DRAFT_SERIAL_NUM</attrib_name>
+            </sql_map_resultset>
+
+          </sql_statement_def>
+        </sql_statement_def_list>
+
+      </function_definition>      
+  </function_list>    
+
+  </entity_definition>
+
+</entity_list>

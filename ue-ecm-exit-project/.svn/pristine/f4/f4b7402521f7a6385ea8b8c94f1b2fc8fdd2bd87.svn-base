@@ -1,0 +1,231 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.emptoris.ecm</groupId>
+	<artifactId>exit-parent</artifactId>
+	<packaging>pom</packaging>
+
+	<!-- update version here -->
+	<version>1.0</version>
+	<name>MCCS-ECM-Exit-SDG</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<persistence_generator.version>1.0</persistence_generator.version>
+		<ue_ecm.version>10.0</ue_ecm.version>
+
+	</properties>
+	<developers>
+		<developer>
+		</developer>
+	</developers>
+	<dependencies>
+        <dependency>
+            <groupId>com.emptoris.ecm.api</groupId>
+            <artifactId>ue-ecm-api</artifactId>
+            <version>10.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.emptoris.ecm.exit</groupId>
+            <artifactId>ue-ecm-exit</artifactId>
+            <version>10.0</version>
+        </dependency>
+		<dependency>
+			<groupId>com.dicarta</groupId>
+			<artifactId>ecm-core</artifactId>
+			<version>${ecm.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.dicarta</groupId>
+			<artifactId>webservices-client</artifactId>
+			<version>${ecm.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.dicarta</groupId>
+			<artifactId>dicarta_log4j</artifactId>
+            		<version>1.1.3</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.emptoris</groupId>
+			<artifactId>utilities</artifactId>
+			<version>1.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- org.apache libraries -->
+		<dependency>
+			<groupId>org.apache</groupId>
+			<artifactId>axis</artifactId>
+			<version>1.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache</groupId>
+			<artifactId>jaxrpc</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+		</dependency>
+        	<dependency>
+            		<groupId>struts</groupId>
+            		<artifactId>struts</artifactId>
+            		<version>1.2.9</version>
+			<scope>provided</scope>
+        	</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<repositories>
+		<repository>
+			<id>Emptoris02</id>
+			<url>http://192.168.201.3:9090/artifactory/ECM101</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		
+	</repositories>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>script/*.java</include>
+				</includes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<configuration>
+					<tasks>
+						<echo>Environment: ${environment}</echo>
+						<echo>CSS: ${css.pref}</echo>
+						<echo>Module: ${module}</echo>
+					</tasks>
+				</configuration>
+			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-compiler-plugin</artifactId>-->
+<!--				<configuration>-->
+<!--					<verbose>true</verbose>-->
+<!--					<fork>true</fork>-->
+<!--					<executable>${build_java_home}/bin/javac.exe</executable>-->
+<!--					<compilerVersion>${build_java_version}</compilerVersion>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
+			<!-- Builds exit.jar and puts in the target directory -->
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-jar-plugin</artifactId>-->
+<!--				<configuration>-->
+<!--					<finalName>exit</finalName>-->
+<!--					<archive>-->
+<!--						<index>false</index>-->
+<!--						<compress>false</compress>-->
+<!--						<addMavenDescriptor>false</addMavenDescriptor>-->
+<!--						<manifest>-->
+<!--							<addClasspath>false</addClasspath>-->
+<!--							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>-->
+<!--						</manifest>-->
+<!--						<manifestEntries>-->
+<!--							<mode>${build.environment}</mode>-->
+<!--							<ecm.version>${ecm.version}</ecm.version>-->
+<!--						</manifestEntries>-->
+<!--					</archive>-->
+<!--			-->
+<!--				</configuration>-->
+<!--			</plugin>-->
+			<!-- packages up the zip file. see the exit.xml file for details -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/exit.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+                               <execution>
+                                 <phase>package</phase>
+                                 <goals>
+                                   <goal>single</goal>
+                                 </goals>
+                               </execution>
+                       </executions>
+			</plugin>
+			<plugin>
+
+				<artifactId>maven-antrun-plugin</artifactId>
+				<dependencies>
+					<!-- pre-ECM 8 : persistence_generator.jar -->
+					<!--
+					<dependency>
+						<groupId>com.dicarta</groupId>
+						<artifactId>persistence_generator</artifactId>
+						<version>${ecm.version}</version>
+					</dependency>
+					-->
+					<!-- ECM 8+ : persistence_generator2.jar -->
+					<dependency>
+						<groupId>com.dicarta</groupId>
+						<artifactId>persistence_generator2</artifactId>
+						<version>${persistence_generator.version}</version>
+					</dependency>
+				</dependencies>
+
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<configuration>
+							<tasks>
+								<path id="gensource.classpath">
+									<fileset dir="${settings.localRepository}">
+										<!-- <include name="com/dicarta/persistence_generator/${ecm.version}/persistence_generator.jar" /> -->
+										<include name="com/dicarta/persistence_generator/${ecm.version}/persistence_generator2.jar" />
+									</fileset>
+								</path>
+								<taskdef name="gensource" classname="com.dicarta.tools.ant.PersistenceCodeGen"
+									classpathref="gensource.classpath" />
+
+								<mkdir dir="${project.build.directory}/generated-sources/main/java" />
+								<gensource
+									destdir="${project.build.directory}/generated-sources/main/java">
+									<input dir="src/main/java/com/emptoris/ecm/exit/persistence"
+										includes="*.pod" />
+									
+								</gensource>
+							</tasks>
+							<sourceRoot>
+								${project.build.directory}/generated-sources/main/java
+							</sourceRoot>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${build_java_version}</source>
+					<target>${build_java_version}</target>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+	<dependencyManagement>
+		<dependencies>
+		</dependencies>
+	</dependencyManagement>
+</project>

@@ -1,0 +1,15 @@
+package com.emptoris.ecm.exit.mccs.constants;
+
+/**
+ * Class to hold all the variable for feature flag keys
+ * 
+ * @author Aalok.Singhvi
+ *
+ */
+public interface ConfigFeatureFlagKeys {
+	
+	String MCCS_NONAMEND_NAME_GENERATE = "mccs.nonamd.name.generate";
+	String MCCS_AMEND_NAME_GENERATE = "mccs.amd.name.generate";
+	String MCCS_AMEND_NAME_UPDATE = "mccs.amd.name.update";
+
+}

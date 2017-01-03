@@ -1,0 +1,155 @@
+package com.emptoris.ecm.exit.mccs.persistenceimpl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import persistence.MCCSCustomNonAmdSerialNumber;
+import persistence.MCCS_CUSTOM_TB_NONAMDPersister;
+import persistence.SerialNumByComibinationIterator;
+
+import com.dicarta.infra.common.PluginException;
+import com.dicarta.infra.logging.ILogger;
+import com.dicarta.infra.logging.Logger;
+import com.dicarta.infra.persistence.common.exception.PersistenceException;
+import com.emptoris.ecm.exit.mccs.constants.ContractConstants;
+import com.emptoris.ecm.exit.mccs.util.UserExitErrorUtil;
+
+/**
+ * @author Aalok.Singhvi
+ *
+ */
+public class NonAmdPeristUtil {
+
+	private static final ILogger LOG = Logger.getLogger(NonAmdPeristUtil.class);
+
+	/**
+	 * @param firstThreeOfName
+	 * @param fiscalYear
+	 * @param seventhChar
+	 * @return
+	 * @throws PluginException 
+	 */
+	public static int generateSequenceNumber(String firstThreeOfName,int fiscalYear, String seventhChar) throws PluginException {
+		
+		int finalSerialNumber = 0;
+		MCCSCustomNonAmdSerialNumber nonAmdVo = new MCCSCustomNonAmdSerialNumber();
+		
+		nonAmdVo.setCOMPANY_ID(firstThreeOfName);
+		nonAmdVo.setYEAR(fiscalYear);
+		nonAmdVo.setCONTRACT_TYPE(seventhChar);
+		
+		
+		MCCS_CUSTOM_TB_NONAMDPersister nonAmdPersister = MCCS_CUSTOM_TB_NONAMDPersister.getInstance();
+		
+		SerialNumByComibinationIterator  serialNumbNonAmdIter= null;
+		List<MCCSCustomNonAmdSerialNumber> dbQueryResult= new ArrayList<MCCSCustomNonAmdSerialNumber>();
+		
+		try {
+			serialNumbNonAmdIter = (SerialNumByComibinationIterator) nonAmdPersister.getSerialNum(nonAmdVo);
+			dbQueryResult = serialNumbNonAmdIter.prefetch();//this will bring resultset based on condition we passed
+			
+			if(dbQueryResult.size() == 0)	{
+				// No Row is existing for this combination in the Table ==> Insert the row 
+				 boolean isRecordInserted = insertNewRow(firstThreeOfName,fiscalYear,seventhChar);
+				 
+				 if(isRecordInserted) { // row insertion was successful
+					 // Now, as new row is inserted the Default serial number will be [1]					
+					 finalSerialNumber = ContractConstants.SEQUENCE_NUM_INITIALIZE;					 
+				 }
+			} else if ( dbQueryResult.size() == 1)	{
+				//For this ==> the combination is available in the Table & has one unique row						
+				for(MCCSCustomNonAmdSerialNumber eachResult : dbQueryResult) {
+					int serialnumber = eachResult.getSERIAL_NUMBER();
+					finalSerialNumber = serialnumber+1;
+				}
+				
+				if(updateTheExistingRow(firstThreeOfName,fiscalYear,seventhChar)){
+					LOG.debug("Record updated in the Table was successfull");
+				}
+			} else {
+				LOG.error("Resultant dbQuery List has more than one row for the provided combination ==> Wrong");
+			}
+			
+		} catch (PersistenceException e) {
+			LOG.error("Error while Access Database - On SELECT Statement");
+			UserExitErrorUtil.throwPluginException(e);
+		}
+		
+		return finalSerialNumber;
+	}
+
+	
+
+	/**
+	 * @param firstThreeOfName
+	 * @param fiscalYear
+	 * @param seventhChar
+	 * @return
+	 * @throws PluginException 
+	 */
+	private static boolean insertNewRow(String firstThreeOfName, int fiscalYear, String seventhChar) throws PluginException {
+		boolean isRecordInserted = false;
+		
+		MCCSCustomNonAmdSerialNumber nonAmdVo = new MCCSCustomNonAmdSerialNumber();
+		
+		nonAmdVo.setCOMPANY_ID(firstThreeOfName);
+		nonAmdVo.setYEAR(fiscalYear);
+		nonAmdVo.setCONTRACT_TYPE(seventhChar);
+		nonAmdVo.setSERIAL_NUMBER(1);
+		
+		MCCS_CUSTOM_TB_NONAMDPersister persister = MCCS_CUSTOM_TB_NONAMDPersister.getInstance();
+		
+		try	{	
+		    int	recordInserted = persister.create(nonAmdVo);
+			if (recordInserted == 1) {
+				isRecordInserted = true;	
+				LOG.debug("Insertion of record was successfull");
+			} else {
+				isRecordInserted = false;
+				LOG.debug("Insertion of record was UNSUCESSFULL");
+			}
+		} catch(PersistenceException e)	{
+			LOG.error("Error while Access Database - On Insert Statement");
+			UserExitErrorUtil.throwPluginException(e);
+		}
+		
+		return isRecordInserted;
+		
+	}
+	
+	
+	/**
+	 * @param firstThreeOfName
+	 * @param fiscalYear
+	 * @param seventhChar
+	 * @return
+	 * @throws PluginException 
+	 */
+	private static boolean updateTheExistingRow(String firstThreeOfName,int fiscalYear, String seventhChar) throws PluginException {
+		
+		boolean isRecordUpdated = false;
+		
+		MCCSCustomNonAmdSerialNumber nonAmdVo = new MCCSCustomNonAmdSerialNumber();
+		nonAmdVo.setCOMPANY_ID(firstThreeOfName);
+		nonAmdVo.setYEAR(fiscalYear);
+		nonAmdVo.setCONTRACT_TYPE(seventhChar);
+		MCCS_CUSTOM_TB_NONAMDPersister persister = MCCS_CUSTOM_TB_NONAMDPersister.getInstance();
+		
+		try	{	
+			int recordUpdated = persister.update(nonAmdVo);
+			if (recordUpdated == 1) {
+				isRecordUpdated = true;
+				LOG.debug(" The Record is updated");
+			} else {
+				isRecordUpdated = false;
+				LOG.debug(" The Record is NOT updated");
+			}
+		} catch(PersistenceException e)	{
+			LOG.error("Error while Access Database - On UPDATE Statement");
+			UserExitErrorUtil.throwPluginException(e);
+		}
+		
+		return isRecordUpdated;		
+	}
+
+}

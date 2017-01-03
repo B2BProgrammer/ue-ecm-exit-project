@@ -1,0 +1,2 @@
+# The existence of this text file causes ECM core to run the new UE framework to load UE classes only once.
+# That framework avoids the PermGen space issue. See PR 75779.

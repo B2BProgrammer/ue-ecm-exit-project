@@ -1,0 +1,29 @@
+###################################################################################
+#
+# Error messages used in Exit code
+#
+###################################################################################
+
+general.internal.failure=Internal error.<br>Please contact Support@emptoris.com who can assist you.<br><br>{0}<br>Error code&#58; E001
+general.ecmapi.error=Internal API error.<br>Please contact Support@emptoris.com who can assist you.<br><br>{0}<br>Error code&#58; E002
+
+persistence.failure.contract=Internal error accessing data for contract {0} - {1}<br>Please contact Support@emptoris.com who can assist you.<br><br>{2}<br>Error code&#58; E004
+
+#Error Message
+errormessage.mccs.autonaming.company.id.missing=Company ID {0} cannot be found.
+errormessage.mccs.autonaming.contract.type.missing=Contract type {0} cannot be found.
+errormessage.mccs.autonaming.generic=Error occurred during customization.
+
+
+## NAC Error set
+errormessage.mccs.autonaming.company.id.notconfig=The Selected Owning Organization is NOT part of given selection
+errormessage.mccs.autonaming.company.id.notselect=Please select the owning Organization while creation of Contract
+
+errormessage.mccs.autonaming.cont.type.notconfig=The Selected Contract Type is NOT part of given selection
+errormessage.mccs.autonaming.cont.type.notselect=Please select the Contract Type while creation of Contract
+
+
+
+
+
+

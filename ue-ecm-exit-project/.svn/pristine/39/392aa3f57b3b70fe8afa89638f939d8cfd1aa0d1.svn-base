@@ -1,0 +1,22 @@
+try {
+com.emptoris.ecm.api.intf.ExitContext exitContext =
+    new com.emptoris.ecm.api.impl.ExitContextImpl(
+        (com.dicarta.appfound.contract.ContractData) ContractObject,
+        (com.dicarta.appfound.common.IUserInfo) UserObject,
+        (com.dicarta.appfound.IContractApprovalTaskProperties) ContractApprovalTaskProperties,
+        (com.dicarta.appfound.workflow.common.WorkflowObjectInfo) WorkflowObject,
+        com.emptoris.ecm.api.intf.ExitContext.ExitTypes.PRE_CONTRACT_APPROVE
+    );
+com.emptoris.ecm.exit.IExit exit = new com.emptoris.ecm.exit.Exit();
+exit.preContractApprove(exitContext);
+} catch ( com.dicarta.infra.common.WarningMessageException ex ) {
+    System.out.println(ex.getMessage());
+    throw ex;
+} catch ( com.dicarta.infra.common.PluginException ex ) {
+    System.out.println(ex.getMessage());
+    throw ex;
+} catch ( Throwable ex ) {
+    System.out.println("preContractApprove Throwable");
+    ex.printStackTrace(System.out);
+    throw ex;
+}

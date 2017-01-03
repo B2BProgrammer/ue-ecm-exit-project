@@ -1,0 +1,132 @@
+<entity_list>
+
+  <entity_definition>
+
+    <entity_name>CondeNast_OU_Department</entity_name>
+
+    <entity_package_name>
+      persistence
+    </entity_package_name>
+    <data_package_name>
+      persistence
+    </data_package_name>
+    <criteria_package_name>
+      persistence
+    </criteria_package_name>
+    <iterator_package_name>
+      persistence
+    </iterator_package_name>
+
+    <entity_data>
+
+      <class_name>CondeNastOUDepartment</class_name>
+      <class_create>true</class_create>
+
+      <attribute_list>
+        <attribute>
+          <attrib_name>m_templatename</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>TEMPLATE_NAME</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+        
+		<attribute>
+          <attrib_name>m_owningorganization</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>OWNING_ORGANIZATION</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+        
+		<attribute>
+          <attrib_name>m_operating_unit_dept</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>OPERATING_UNIT_DEPT</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+		
+		<attribute>
+          <attrib_name>m_status</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>STATUS</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+		
+		
+		
+		<attribute>
+          <attrib_name>m_gap</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>GAP</db_field_name>
+          <iskey>false</iskey>
+		</attribute>
+		  
+		<attribute>
+          <attrib_name>m_comments</attrib_name>
+          <attrib_type>String</attrib_type>
+          <db_field_name>COMMENTS</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+        
+        <attribute>
+         <attrib_name>m_lineSeq</attrib_name>
+          <attrib_type>int</attrib_type>
+          <db_field_name>LINE_SEQ</db_field_name>
+          <iskey>false</iskey>
+        </attribute>
+		
+		 </attribute_list>
+		 
+		 
+    </entity_data>
+	<function_list>
+        <function_definition>
+
+			<func_type>findByCriteria</func_type>
+			<func_name>getSeq</func_name>
+			<iterator_class_name>SeqDetailsIterator</iterator_class_name>
+
+			<criteria_class_def>
+				<class_name>CondeNastOUDepartment</class_name>
+				<attribute_list>
+					<attribute>
+						<attrib_name>m_templatename</attrib_name>
+						<attrib_type>String</attrib_type>
+					</attribute>
+				</attribute_list>
+			</criteria_class_def>
+
+			<data_class_def>
+				<class_name>CondeNastOUDepartment</class_name>
+			</data_class_def>
+
+			<sql_statement_def_list>
+				<sql_statement_def>
+
+				<sql_string>select distinct OPERATING_UNIT_DEPT,STATUS,GAP,COMMENTS,LINE_SEQ from CondeNast_OU_Department where TEMPLATE_NAME = ? and OWNING_ORGANIZATION IN(?,'ALL_ORGS') ORDER BY LINE_SEQ ASC</sql_string>
+
+				<sql_map_preparestmt>
+					<class_name>CondeNastOUDepartment</class_name>
+					<attrib_name>m_templatename</attrib_name>
+					<attrib_name>m_owningorganization</attrib_name>					
+				</sql_map_preparestmt>
+
+				<sql_map_resultset>
+					<class_name>CondeNastOUDepartment</class_name>
+					<attrib_name>m_operating_unit_dept</attrib_name>
+					<attrib_name>m_status</attrib_name>
+					<attrib_name>m_gap</attrib_name>
+					<attrib_name>m_comments</attrib_name>
+					<attrib_name>m_lineSeq</attrib_name>
+				</sql_map_resultset>
+
+				</sql_statement_def>
+		</sql_statement_def_list>
+
+      </function_definition>
+	</function_list>	
+     
+
+
+  </entity_definition>
+
+</entity_list>
