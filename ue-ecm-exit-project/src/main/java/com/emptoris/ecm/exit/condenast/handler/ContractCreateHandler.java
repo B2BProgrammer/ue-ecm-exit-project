@@ -25,6 +25,7 @@ import com.emptoris.ecm.exit.condenast.util.ContractTemplateUtility;
 public class ContractCreateHandler {
 	
 	// LOG Variable to store all the details performed in this BIC
+	
 	private static final ILogger LOG = Logger.getLogger(ContractCreateHandler.class);
 	
 

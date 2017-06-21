@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry including="**/*.java" kind="src" path="src/main/java"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry including="**/*.java" kind="src" path="target/generated-sources/main/java"/>
-	<classpathentry excluding="**/*.java" including="script/*.java" kind="src" path="src/main/resources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="var" path="M2_REPO/com/emptoris/ecm/api/ue-ecm-api/10.0/ue-ecm-api-10.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/emptoris/ecm/exit/ue-ecm-exit/10.0/ue-ecm-exit-10.0.jar"/>	
-	<classpathentry kind="var" path="M2_REPO/com/dicarta/ecm-core/10.0.1/ecm-core-10.0.1.jar"/>	
+	<classpathentry kind="var" path="M2_REPO/com/emptoris/ecm/exit/ue-ecm-exit/10.0/ue-ecm-exit-10.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/dicarta/ecm-core/10.0.1/ecm-core-10.0.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/dicarta/webservices-client/10.0.0/webservices-client-10.0.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/dicarta/dicarta_log4j/1.1.3/dicarta_log4j-1.1.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/emptoris/utilities/1.0/utilities-1.0.jar"/>
@@ -24,6 +37,17 @@
 	<classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.2/antlr-2.7.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/xalan/xalan/2.5.1/xalan-2.5.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Ajith.Ajjarani/.m2/repository/j2ee/j2ee/6.0/j2ee-6.0.jar"/>	
+	<classpathentry exported="true" kind="lib" path="C:/Users/Ajith.Ajjarani/.m2/repository/j2ee/j2ee/6.0/j2ee-6.0.jar"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
